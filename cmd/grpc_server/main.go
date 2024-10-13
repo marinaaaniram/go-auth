@@ -11,10 +11,10 @@ import (
 	"github.com/brianvoe/gofakeit"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 const grpcPort = 50051
