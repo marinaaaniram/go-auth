@@ -13,10 +13,10 @@ services:
     volumes:
       - postgres_volume:/var/lib/postgresql/data
 
-  # migrator:
-  #   build:
-  #     context: .
-  #     dockerfile: migration.Dockerfile
-  #   restart: on-failure
-  #   environment:
-  #     DB_HOST: db
+  migrator:
+    build:
+      context: .
+      dockerfile: migration.Dockerfile
+    restart: on-failure
+    environment:
+      DB_HOST: db
