@@ -12,6 +12,11 @@ services:
       - "${PG_PORT}:5432"
     volumes:
       - postgres_volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   migrator:
     build:
@@ -20,3 +25,6 @@ services:
     restart: on-failure
     environment:
       DB_HOST: db
+    depends_on:
+      postgres:
+        condition: service_healthy
