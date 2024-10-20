@@ -31,16 +31,6 @@ type server struct {
 	pool *pgxpool.Pool
 }
 
-type AuthUser struct {
-	ID        int        `json:"id"`
-	Name      string     `json:"name"`
-	Email     string     `json:"email"`
-	Password  string     `json:"password"`
-	Role      string     `json:"role"`
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt *time.Time `json:"updatedAt"`
-}
-
 func main() {
 	ctx := context.Background()
 
@@ -70,8 +60,8 @@ func main() {
 	}
 }
 
-// Create - create new user
-func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+// CreateUser - create new user
+func (s *server) CreateUser(ctx context.Context, req *desc.CreateUserRequest) (*desc.CreateUserResponse, error) {
 	builderInsert := sq.Insert("auth_user").
 		PlaceholderFormat(sq.Dollar).
 		Columns("name", "email", "password", "role").
@@ -91,13 +81,13 @@ func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 
 	log.Printf("Inserted user with id: %d", userID)
 
-	return &desc.CreateResponse{
+	return &desc.CreateUserResponse{
 		Id: int64(userID),
 	}, nil
 }
 
-// Get - get user by id
-func (s *server) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetResponse, error) {
+// GetUser - get user by id
+func (s *server) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.GetUserResponse, error) {
 	builderSelect := sq.Select("id", "name", "email", "role", "created_at", "updated_at").
 		From("auth_user").
 		PlaceholderFormat(sq.Dollar).
@@ -109,9 +99,16 @@ func (s *server) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetRespon
 		return nil, status.Errorf(codes.Internal, "Failed to build select query: %v", err)
 	}
 
-	user := AuthUser{}
-	var updatedAt pq.NullTime
-	err = s.pool.QueryRow(ctx, query, args...).Scan(&user.ID, &user.Name, &user.Email, &user.Role, &user.CreatedAt, &updatedAt)
+	var (
+		userId            int
+		userName          string
+		userEmail         string
+		userRole          string
+		createdAt         time.Time
+		updatedAtNullable pq.NullTime
+	)
+
+	err = s.pool.QueryRow(ctx, query, args...).Scan(&userId, &userName, &userEmail, &userRole, &createdAt, &updatedAtNullable)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, status.Errorf(codes.NotFound, "User with id %d not found", req.GetId())
@@ -125,30 +122,31 @@ func (s *server) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetRespon
 	}
 
 	var role desc.Enum
-	if val, ok := roleMap[user.Role]; ok {
+	if val, ok := roleMap[userRole]; ok {
 		role = val
 	} else {
 		role = desc.Enum_UNKNOWN
 	}
-	var updatedAtPB *timestamppb.Timestamp
-	if updatedAt.Valid {
-		updatedAtPB = timestamppb.New(updatedAt.Time)
+
+	var updatedAt *timestamppb.Timestamp
+	if updatedAtNullable.Valid {
+		updatedAt = timestamppb.New(updatedAtNullable.Time)
 	} else {
-		updatedAtPB = nil
+		updatedAt = nil
 	}
 
-	return &desc.GetResponse{
-		Id:        int64(user.ID),
-		Name:      user.Name,
-		Email:     user.Email,
+	return &desc.GetUserResponse{
+		Id:        int64(userId),
+		Name:      userName,
+		Email:     userEmail,
 		Role:      role,
-		CreatedAt: timestamppb.New(user.CreatedAt),
-		UpdatedAt: updatedAtPB,
+		CreatedAt: timestamppb.New(createdAt),
+		UpdatedAt: updatedAt,
 	}, nil
 }
 
-// Update - update user by id
-func (s *server) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.Empty, error) {
+// UpdateUser - update user by id
+func (s *server) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*emptypb.Empty, error) {
 	builderSelect := sq.Select("COUNT(*)").
 		From("auth_user").
 		PlaceholderFormat(sq.Dollar).
@@ -192,7 +190,7 @@ func (s *server) Update(ctx context.Context, req *desc.UpdateRequest) (*emptypb.
 }
 
 // Delete - delete user by id
-func (s *server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+func (s *server) DeleteUser(ctx context.Context, req *desc.DeleteUserRequest) (*emptypb.Empty, error) {
 	builderSelect := sq.Select("COUNT(*)").
 		From("auth_user").
 		PlaceholderFormat(sq.Dollar).
