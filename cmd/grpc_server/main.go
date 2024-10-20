@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"log"
 	"net"
 	"time"
@@ -18,13 +18,15 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"github.com/marinaaaniram/go-auth/internal/config"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
-const (
-	grpcPort = 50051
-	dbDSN    = "host=localhost port=54321 dbname=postgres user=postgres password=postgres sslmode=disable"
-)
+var configPath string
+
+func init() {
+	flag.StringVar(&configPath, "config-path", ".env", "path to config file")
+}
 
 type server struct {
 	desc.UnimplementedUserV1Server
@@ -32,9 +34,26 @@ type server struct {
 }
 
 func main() {
+	flag.Parse()
 	ctx := context.Background()
 
-	pool, err := pgxpool.Connect(ctx, dbDSN)
+	// Считываем переменные окружения
+	err := config.Load(configPath)
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+
+	grpcConfig, err := config.NewGRPCConfig()
+	if err != nil {
+		log.Fatalf("failed to get grpc config: %v", err)
+	}
+
+	pgConfig, err := config.NewPGConfig()
+	if err != nil {
+		log.Fatalf("failed to get pg config: %v", err)
+	}
+
+	pool, err := pgxpool.Connect(ctx, pgConfig.DSN())
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -44,7 +63,7 @@ func main() {
 		pool: pool,
 	}
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", grpcPort))
+	lis, err := net.Listen("tcp", grpcConfig.Address())
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -110,7 +129,7 @@ func (s *server) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.G
 
 	err = s.pool.QueryRow(ctx, query, args...).Scan(&userId, &userName, &userEmail, &userRole, &createdAt, &updatedAtNullable)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if err.Error() == pgx.ErrNoRows.Error() {
 			return nil, status.Errorf(codes.NotFound, "User with id %d not found", req.GetId())
 		}
 		return nil, status.Errorf(codes.Internal, "Failed to query user: %v", err)
@@ -131,8 +150,6 @@ func (s *server) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.G
 	var updatedAt *timestamppb.Timestamp
 	if updatedAtNullable.Valid {
 		updatedAt = timestamppb.New(updatedAtNullable.Time)
-	} else {
-		updatedAt = nil
 	}
 
 	return &desc.GetUserResponse{
@@ -147,26 +164,6 @@ func (s *server) GetUser(ctx context.Context, req *desc.GetUserRequest) (*desc.G
 
 // UpdateUser - update user by id
 func (s *server) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*emptypb.Empty, error) {
-	builderSelect := sq.Select("COUNT(*)").
-		From("auth_user").
-		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{"id": req.GetId()})
-
-	selectQuery, args, err := builderSelect.ToSql()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to build select query: %v", err)
-	}
-
-	var count int
-	err = s.pool.QueryRow(ctx, selectQuery, args...).Scan(&count)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to select user: %v", err)
-	}
-
-	if count == 0 {
-		return nil, status.Errorf(codes.NotFound, "User with id %d not found", req.GetId())
-	}
-
 	builderUpdate := sq.Update("auth_user").
 		PlaceholderFormat(sq.Dollar).
 		Set("name", req.Name.GetValue()).
@@ -191,26 +188,6 @@ func (s *server) UpdateUser(ctx context.Context, req *desc.UpdateUserRequest) (*
 
 // Delete - delete user by id
 func (s *server) DeleteUser(ctx context.Context, req *desc.DeleteUserRequest) (*emptypb.Empty, error) {
-	builderSelect := sq.Select("COUNT(*)").
-		From("auth_user").
-		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{"id": req.GetId()})
-
-	selectQuery, args, err := builderSelect.ToSql()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to build select query: %v", err)
-	}
-
-	var count int
-	err = s.pool.QueryRow(ctx, selectQuery, args...).Scan(&count)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to select user: %v", err)
-	}
-
-	if count == 0 {
-		return nil, status.Errorf(codes.NotFound, "User with id %d not found", req.GetId())
-	}
-
 	builderDelete := sq.Delete("auth_user").
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{"id": req.GetId()})
