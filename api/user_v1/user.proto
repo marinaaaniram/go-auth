@@ -25,7 +25,7 @@ message UserInfo {
   string name = 1;
   string email = 2;
   string password = 3;
-  string role = 4;
+  Enum role = 4;
   google.protobuf.Timestamp created_at = 5;
   google.protobuf.Timestamp updated_at = 6;
 }
@@ -40,7 +40,7 @@ message CreateRequest {
   string email = 2;
   string password = 3;
   string password_confirm = 4;
-  string role = 5;
+  Enum role = 5;
 }
 
 message CreateResponse {
@@ -58,7 +58,7 @@ message GetResponse {
 message UpdateRequest {
   int64 id = 1;
   google.protobuf.StringValue name = 2;
-  string role = 3;
+  Enum role = 3;
 }
 
 message DeleteRequest {
