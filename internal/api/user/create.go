@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Create user_v1 in desc layer
 func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	if req.Password != req.PasswordConfirm {
 		return nil, status.Error(codes.InvalidArgument, "'password' and 'password_confirm' do not match")

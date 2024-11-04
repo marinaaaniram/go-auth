@@ -33,6 +33,7 @@ func newServiceProvider() *serviceProvider {
 	return &serviceProvider{}
 }
 
+// Get postgres config
 func (s *serviceProvider) GetPGConfig() config.PGConfig {
 	if s.pgConfig == nil {
 		cfg, err := config.NewPGConfig()
@@ -46,6 +47,7 @@ func (s *serviceProvider) GetPGConfig() config.PGConfig {
 	return s.pgConfig
 }
 
+// Get GRPC config
 func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
 	if s.grpcConfig == nil {
 		cfg, err := config.NewGRPCConfig()
@@ -59,6 +61,7 @@ func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
 	return s.grpcConfig
 }
 
+// Init db client
 func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	if s.dbClient == nil {
 		cl, err := pg.New(ctx, s.GetPGConfig().DSN())
@@ -78,6 +81,7 @@ func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	return s.dbClient
 }
 
+// Init db transactions manager
 func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	if s.txManager == nil {
 		s.txManager = transaction.NewTransactionManager(s.DBClient(ctx).DB())
@@ -86,6 +90,7 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	return s.txManager
 }
 
+// Init User repository
 func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.UserRepository {
 	if s.userRepository == nil {
 		s.userRepository = userRepository.NewRepository(s.DBClient(ctx))
@@ -94,6 +99,7 @@ func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.User
 	return s.userRepository
 }
 
+// Init User service
 func (s *serviceProvider) GetUserService(ctx context.Context) service.UserService {
 	if s.userService == nil {
 		s.userService = userService.NewService(s.GetUserRepository(ctx))
@@ -102,6 +108,7 @@ func (s *serviceProvider) GetUserService(ctx context.Context) service.UserServic
 	return s.userService
 }
 
+// Init User implementaion
 func (s *serviceProvider) GetUserImpl(ctx context.Context) *user.Implementation {
 	if s.userImpl == nil {
 		s.userImpl = user.NewImplementation(s.GetUserService(ctx))
