@@ -10,6 +10,7 @@ type Implementation struct {
 	userService service.UserService
 }
 
+// Create User implementation
 func NewImplementation(userService service.UserService) *Implementation {
 	return &Implementation{
 		userService: userService,

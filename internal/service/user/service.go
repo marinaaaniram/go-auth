@@ -9,6 +9,7 @@ type serv struct {
 	userRepository repository.UserRepository
 }
 
+// Create User service
 func NewService(userRepository repository.UserRepository) service.UserService {
 	return &serv{
 		userRepository: userRepository,

@@ -7,6 +7,7 @@ import (
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
+// Describe User service interface
 type UserService interface {
 	Create(ctx context.Context, user *model.User) (*desc.User, error)
 	Get(ctx context.Context, user *model.User) (*desc.User, error)
