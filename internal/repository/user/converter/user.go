@@ -5,7 +5,7 @@ import (
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
 )
 
-// Convert model repo User to internal model User
+// Convert User model repo to internal model
 func FromRepoToUser(user *modelRepo.User) *model.User {
 	return &model.User{
 		ID:        user.ID,

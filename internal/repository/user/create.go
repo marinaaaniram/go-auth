@@ -14,7 +14,7 @@ import (
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
 )
 
-// Create user_v1 in repository layer
+// Create User in repository layer
 func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error) {
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).

@@ -31,7 +31,7 @@ func roleDescToModel(role desc.RoleEnum) model.UserRole {
 	}
 }
 
-// Convert internal User model to desc User model
+// Convert User internal model to desc model
 func FromUserToDesc(user *model.User) *desc.User {
 	var updatedAt *timestamppb.Timestamp
 	if user.UpdatedAt.Valid {

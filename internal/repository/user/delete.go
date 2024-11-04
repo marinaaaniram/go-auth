@@ -11,7 +11,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
-// Delete user_v1 in repository layer
+// Delete User in repository layer
 func (r *repo) Delete(ctx context.Context, user *model.User) error {
 	builderSelect := sq.Select("COUNT(*)").
 		From(tableName).

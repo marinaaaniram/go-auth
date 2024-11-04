@@ -11,7 +11,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
-// Update user_v1 in repository layer
+// Update User in repository layer
 func (r *repo) Update(ctx context.Context, user *model.User) error {
 	builderUpdate := sq.Update(tableName).
 		PlaceholderFormat(sq.Dollar).

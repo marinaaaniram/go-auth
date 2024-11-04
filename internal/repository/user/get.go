@@ -14,7 +14,7 @@ import (
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
 )
 
-// Get user_v1 in repository layer
+// Get User in repository layer
 func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 	builderSelect := sq.Select(idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn).
 		From(tableName).
