@@ -3,9 +3,10 @@ package user
 import (
 	"context"
 
+	"google.golang.org/protobuf/types/known/emptypb"
+
 	"github.com/marinaaaniram/go-auth/internal/converter"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Update User in desc layer

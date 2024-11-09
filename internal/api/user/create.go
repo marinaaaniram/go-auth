@@ -3,10 +3,11 @@ package user
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-auth/internal/converter"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/marinaaaniram/go-auth/internal/converter"
+	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
 // Create User in desc layer
