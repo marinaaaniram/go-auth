@@ -8,9 +8,10 @@ import (
 )
 
 var (
-	ErrPasswordsDoNotMatch = status.Errorf(codes.InvalidArgument, "'password' and 'password_confirm' do not match")
-	ErrEmailIsNotValid     = status.Errorf(codes.InvalidArgument, "Email format is invalid")
-	ErrRoleIsNotValid      = status.Errorf(codes.InvalidArgument, "Role format is invalid")
+	ErrPasswordsDoNotMatch  = status.Errorf(codes.InvalidArgument, "'password' and 'password_confirm' do not match")
+	ErrFailedToHashPassword = status.Errorf(codes.InvalidArgument, "Failed to hash password")
+	ErrEmailIsNotValid      = status.Errorf(codes.InvalidArgument, "Email format is invalid")
+	ErrRoleIsNotValid       = status.Errorf(codes.InvalidArgument, "Role format is invalid")
 )
 
 func ErrCanNotBeEmpty(argumentName string) error {
