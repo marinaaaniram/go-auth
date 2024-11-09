@@ -16,7 +16,7 @@ import (
 // Update User in repository layer
 func (r *repo) Update(ctx context.Context, user *model.User) error {
 	if user == nil {
-		return nil, status.Error(codes.Internal, "user is nil")
+		return status.Error(codes.Internal, "user is nil")
 	}
 
 	builderUpdate := sq.Update(tableName).
