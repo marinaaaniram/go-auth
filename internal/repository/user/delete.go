@@ -13,6 +13,10 @@ import (
 
 // Delete User in repository layer
 func (r *repo) Delete(ctx context.Context, user *model.User) error {
+	if user == nil {
+		return status.Error(codes.Internal, "user is nil")
+	}
+
 	builderSelect := sq.Select("COUNT(*)").
 		From(tableName).
 		PlaceholderFormat(sq.Dollar).

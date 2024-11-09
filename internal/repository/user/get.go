@@ -16,6 +16,10 @@ import (
 
 // Get User in repository layer
 func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
+	if user == nil {
+		return nil, status.Error(codes.Internal, "user is nil")
+	}
+
 	builderSelect := sq.Select(idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn).
 		From(tableName).
 		PlaceholderFormat(sq.Dollar).

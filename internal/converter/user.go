@@ -33,6 +33,10 @@ func roleDescToModel(role desc.RoleEnum) model.UserRole {
 
 // Convert User internal model to desc model
 func FromUserToDesc(user *model.User) *desc.User {
+	if user == nil {
+		return nil
+	}
+
 	var updatedAt *timestamppb.Timestamp
 	if user.UpdatedAt.Valid {
 		updatedAt = timestamppb.New(user.UpdatedAt.Time)
@@ -52,6 +56,10 @@ func FromUserToDesc(user *model.User) *desc.User {
 
 // Convert desc CreateRequest fields to internal User model
 func FromDescCreateToUser(req *desc.CreateRequest) *model.User {
+	if req == nil {
+		return nil
+	}
+
 	return &model.User{
 		Name:     req.GetName(),
 		Email:    req.GetEmail(),
@@ -62,6 +70,10 @@ func FromDescCreateToUser(req *desc.CreateRequest) *model.User {
 
 // Convert desc GetRequest fields to internal User model
 func FromDescGetToUser(req *desc.GetRequest) *model.User {
+	if req == nil {
+		return nil
+	}
+
 	return &model.User{
 		ID: req.GetId(),
 	}
@@ -69,6 +81,10 @@ func FromDescGetToUser(req *desc.GetRequest) *model.User {
 
 // Convert desc UpdateRequest fields to internal User model
 func FromDescUpdateToUser(req *desc.UpdateRequest) *model.User {
+	if req == nil {
+		return nil
+	}
+
 	var name string
 	if req.GetName() != nil {
 		name = req.GetName().GetValue()
@@ -83,6 +99,10 @@ func FromDescUpdateToUser(req *desc.UpdateRequest) *model.User {
 
 // Convert desc DeleteRequest fields to internal User model
 func FromDescDeleteToUser(req *desc.DeleteRequest) *model.User {
+	if req == nil {
+		return nil
+	}
+
 	return &model.User{
 		ID: req.GetId(),
 	}

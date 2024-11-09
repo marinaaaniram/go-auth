@@ -16,6 +16,10 @@ import (
 
 // Create User in repository layer
 func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error) {
+	if user == nil {
+		return nil, status.Error(codes.Internal, "user is nil")
+	}
+
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(nameColumn, emailColumn, passwordColumn, roleColumn).

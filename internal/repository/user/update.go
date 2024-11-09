@@ -6,6 +6,8 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/marinaaaniram/go-auth/internal/client/db"
 	"github.com/marinaaaniram/go-auth/internal/model"
@@ -13,6 +15,10 @@ import (
 
 // Update User in repository layer
 func (r *repo) Update(ctx context.Context, user *model.User) error {
+	if user == nil {
+		return nil, status.Error(codes.Internal, "user is nil")
+	}
+
 	builderUpdate := sq.Update(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Set(nameColumn, user.Name).

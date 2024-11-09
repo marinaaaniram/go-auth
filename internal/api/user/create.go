@@ -12,6 +12,10 @@ import (
 
 // Create User in desc layer
 func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Internal, "req is nil")
+	}
+
 	if req.Password != req.PasswordConfirm {
 		return nil, status.Error(codes.InvalidArgument, "'password' and 'password_confirm' do not match")
 	}
