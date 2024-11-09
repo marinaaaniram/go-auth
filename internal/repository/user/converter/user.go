@@ -8,6 +8,7 @@ import (
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
 )
 
+// Convert sql.NullTime to *time.Time
 func repoNullTimeToTime(userUpdatedAt sql.NullTime) *time.Time {
 	var updatedAt *time.Time
 	if userUpdatedAt.Valid {

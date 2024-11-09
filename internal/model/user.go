@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Internal User model
 type User struct {
 	ID        int64
 	Name      string

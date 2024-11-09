@@ -7,6 +7,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
+// Repository User model
 type User struct {
 	ID        int64
 	Name      string
@@ -17,6 +18,7 @@ type User struct {
 	UpdatedAt sql.NullTime
 }
 
+// Repository User Model with fields to update
 type UserUpdate struct {
 	ID   int64
 	Name *string
