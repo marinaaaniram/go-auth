@@ -19,12 +19,12 @@ func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 		return nil, errors.ErrPointerIsNil("user")
 	}
 
-	builderSelect := sq.Select(idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn).
+	builder := sq.Select(idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn).
 		From(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{idColumn: user.ID})
 
-	query, args, err := builderSelect.ToSql()
+	query, args, err := builder.ToSql()
 	if err != nil {
 		return nil, errors.ErrFailedToBuildQuery(err)
 	}
@@ -43,5 +43,5 @@ func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 		return nil, errors.ErrFailedToSelectQuery(err)
 	}
 
-	return converterRepo.FromRepoToUser(&repoUser), nil
+	return converterRepo.FromRepoToUserGet(&repoUser), nil
 }

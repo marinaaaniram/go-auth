@@ -9,25 +9,23 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/client/db"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
-	converterRepo "github.com/marinaaaniram/go-auth/internal/repository/user/converter"
-	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
 )
 
 // Create User in repository layer
-func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error) {
+func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
 	if user == nil {
-		return nil, errors.ErrPointerIsNil("user")
+		return 0, errors.ErrPointerIsNil("user")
 	}
 
-	builderInsert := sq.Insert(tableName).
+	builder := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(nameColumn, emailColumn, passwordColumn, roleColumn).
 		Values(user.Name, user.Password, user.Email, user.Role).
-		Suffix(fmt.Sprintf("RETURNING %s, %s, %s, %s, %s, %s", idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn))
+		Suffix(fmt.Sprintf("RETURNING %s", idColumn))
 
-	query, args, err := builderInsert.ToSql()
+	query, args, err := builder.ToSql()
 	if err != nil {
-		return nil, errors.ErrFailedToBuildQuery(err)
+		return 0, errors.ErrFailedToBuildQuery(err)
 	}
 
 	q := db.Query{
@@ -35,11 +33,11 @@ func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error
 		QueryRaw: query,
 	}
 
-	var repoUser modelRepo.User
-	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&repoUser.ID, &repoUser.Name, &repoUser.Email, &repoUser.Role, &repoUser.CreatedAt, &repoUser.UpdatedAt)
+	var userId int64
+	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&userId)
 	if err != nil {
-		return nil, errors.ErrFailedToInsertQuery(err)
+		return 0, errors.ErrFailedToInsertQuery(err)
 	}
 
-	return converterRepo.FromRepoToUser(&repoUser), nil
+	return userId, nil
 }

@@ -44,7 +44,7 @@ message CreateRequest {
 }
 
 message CreateResponse {
-  User user = 1;
+  int64 id = 1;
 }
 
 message GetRequest {

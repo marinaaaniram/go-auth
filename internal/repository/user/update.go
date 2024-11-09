@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"log"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -10,6 +9,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/client/db"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/repository/user/converter"
 )
 
 // Update User in repository layer
@@ -18,14 +18,21 @@ func (r *repo) Update(ctx context.Context, user *model.User) error {
 		return errors.ErrPointerIsNil("user")
 	}
 
-	builderUpdate := sq.Update(tableName).
-		PlaceholderFormat(sq.Dollar).
-		Set(nameColumn, user.Name).
-		Set(roleColumn, user.Role).
-		Set(updatedAtColumn, time.Now()).
-		Where(sq.Eq{idColumn: user.ID})
+	repoUserUpdate := converter.FromUserToRepoUpdate(user)
 
-	query, args, err := builderUpdate.ToSql()
+	builder := sq.Update(tableName).
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{idColumn: user.ID}).
+		Set(updatedAtColumn, time.Now())
+
+	if repoUserUpdate.Name != nil {
+		builder = builder.Set(nameColumn, *repoUserUpdate.Name)
+	}
+	if repoUserUpdate.Role != nil {
+		builder = builder.Set(roleColumn, *repoUserUpdate.Role)
+	}
+
+	query, args, err := builder.ToSql()
 	if err != nil {
 		return errors.ErrFailedToBuildQuery(err)
 	}
@@ -35,12 +42,10 @@ func (r *repo) Update(ctx context.Context, user *model.User) error {
 		QueryRaw: query,
 	}
 
-	res, err := r.db.DB().ExecContext(ctx, q, args...)
+	_, err = r.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return errors.ErrFailedToUpdateQuery(err)
 	}
-
-	log.Printf("Updated %d rows", res.RowsAffected())
 
 	return nil
 }

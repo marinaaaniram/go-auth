@@ -37,20 +37,27 @@ func FromUserToDesc(user *model.User) *desc.User {
 		return nil
 	}
 
-	var updatedAt *timestamppb.Timestamp
-	if user.UpdatedAt.Valid {
-		updatedAt = timestamppb.New(user.UpdatedAt.Time)
-	}
-
-	return &desc.User{
+	descUser := &desc.User{
 		Id: user.ID,
 		UserInfo: &desc.UserInfo{
 			Name:      user.Name,
 			Email:     user.Email,
 			Role:      roleModelToDesc(user.Role),
 			CreatedAt: timestamppb.New(user.CreatedAt),
-			UpdatedAt: updatedAt,
 		},
+	}
+
+	if user.UpdatedAt != nil {
+		descUser.UserInfo.UpdatedAt = timestamppb.New(*user.UpdatedAt)
+	}
+
+	return descUser
+}
+
+// Convert User internal model to desc model
+func FromUserIdToDescCreate(id int64) *desc.CreateResponse {
+	return &desc.CreateResponse{
+		Id: id,
 	}
 }
 

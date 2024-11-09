@@ -14,20 +14,26 @@ func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*
 		return nil, errors.ErrPointerIsNil("req")
 	}
 
-	err := validatePassword(req.Password, req.PasswordConfirm)
+	if err := validateName(req.Name); err != nil {
+		return nil, err
+	}
+
+	if err := validateEmail(req.Email); err != nil {
+		return nil, err
+	}
+
+	if err := validatePassword(req.Password, req.PasswordConfirm); err != nil {
+		return nil, err
+	}
+
+	if err := validateRole(req.Role); err != nil {
+		return nil, err
+	}
+
+	userId, err := i.userService.Create(ctx, converter.FromDescCreateToUser(req))
 	if err != nil {
 		return nil, err
 	}
 
-	userDesc, err := i.userService.Create(ctx, converter.FromDescCreateToUser(req))
-	if err != nil {
-		return nil, err
-	}
-	if userDesc == nil {
-		return nil, errors.ErrPointerIsNil("userObj")
-	}
-
-	return &desc.CreateResponse{
-		User: userDesc,
-	}, nil
+	return converter.FromUserIdToDescCreate(userId), nil
 }

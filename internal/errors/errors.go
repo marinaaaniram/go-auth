@@ -9,7 +9,13 @@ import (
 
 var (
 	ErrPasswordsDoNotMatch = status.Errorf(codes.InvalidArgument, "'password' and 'password_confirm' do not match")
+	ErrEmailIsNotValid     = status.Errorf(codes.InvalidArgument, "Email format is invalid")
+	ErrRoleIsNotValid      = status.Errorf(codes.InvalidArgument, "Role format is invalid")
 )
+
+func ErrCanNotBeEmpty(argumentName string) error {
+	return status.Errorf(codes.Internal, fmt.Sprintf("%s cannot be empty", argumentName))
+}
 
 func ErrPointerIsNil(argumentName string) error {
 	return status.Errorf(codes.Internal, fmt.Sprintf("%s is nil", argumentName))

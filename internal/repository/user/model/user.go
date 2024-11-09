@@ -16,3 +16,9 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 }
+
+type UserUpdate struct {
+	ID   int64
+	Name *string
+	Role *model.UserRole
+}

@@ -16,36 +16,11 @@ func (r *repo) Delete(ctx context.Context, user *model.User) error {
 		return errors.ErrPointerIsNil("user")
 	}
 
-	builderSelect := sq.Select("COUNT(*)").
-		From(tableName).
+	builder := sq.Delete(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{idColumn: user.ID})
 
-	selectQuery, args, err := builderSelect.ToSql()
-	if err != nil {
-		return errors.ErrFailedToBuildQuery(err)
-	}
-
-	selectQ := db.Query{
-		Name:     "user_repository.SelectId",
-		QueryRaw: selectQuery,
-	}
-
-	var count int
-	err = r.db.DB().QueryRowContext(ctx, selectQ, args...).Scan(&count)
-	if err != nil {
-		return errors.ErrFailedToSelectQuery(err)
-	}
-
-	if count == 0 {
-		return errors.ErrObjectNotFount("user", user.ID)
-	}
-
-	builderDelete := sq.Delete(tableName).
-		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{idColumn: user.ID})
-
-	query, args, err := builderDelete.ToSql()
+	query, args, err := builder.ToSql()
 	if err != nil {
 		return errors.ErrFailedToBuildQuery(err)
 	}
