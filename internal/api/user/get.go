@@ -20,6 +20,9 @@ func (i *Implementation) Get(ctx context.Context, req *desc.GetRequest) (*desc.G
 	if err != nil {
 		return nil, err
 	}
+	if userDesc == nil {
+		return nil, status.Error(codes.Internal, "userDesc is nil")
+	}
 
 	return &desc.GetResponse{
 		User: userDesc,

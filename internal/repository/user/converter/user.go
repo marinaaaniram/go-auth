@@ -7,6 +7,10 @@ import (
 
 // Convert User model repo to internal model
 func FromRepoToUser(user *modelRepo.User) *model.User {
+	if user == nil {
+		return nil
+	}
+
 	return &model.User{
 		ID:        user.ID,
 		Name:      user.Name,

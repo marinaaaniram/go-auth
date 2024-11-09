@@ -24,6 +24,9 @@ func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*
 	if err != nil {
 		return nil, err
 	}
+	if userDesc == nil {
+		return nil, status.Error(codes.Internal, "userDesc is nil")
+	}
 
 	return &desc.CreateResponse{
 		User: userDesc,

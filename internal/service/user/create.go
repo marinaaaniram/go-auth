@@ -21,6 +21,9 @@ func (s *serv) Create(ctx context.Context, user *model.User) (*desc.User, error)
 	if err != nil {
 		return nil, err
 	}
+	if userObj == nil {
+		return nil, status.Error(codes.Internal, "userObj is nil")
+	}
 
 	return converter.FromUserToDesc(userObj), nil
 }
