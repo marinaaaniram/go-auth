@@ -4,17 +4,16 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/marinaaaniram/go-auth/internal/client/db"
+	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Delete User in repository layer
 func (r *repo) Delete(ctx context.Context, user *model.User) error {
 	if user == nil {
-		return status.Error(codes.Internal, "user is nil")
+		return errors.ErrPointerIsNil("user")
 	}
 
 	builderSelect := sq.Select("COUNT(*)").
@@ -24,7 +23,7 @@ func (r *repo) Delete(ctx context.Context, user *model.User) error {
 
 	selectQuery, args, err := builderSelect.ToSql()
 	if err != nil {
-		return status.Errorf(codes.Internal, "Failed to build select query: %v", err)
+		return errors.ErrFailedToBuildQuery(err)
 	}
 
 	selectQ := db.Query{
@@ -35,11 +34,11 @@ func (r *repo) Delete(ctx context.Context, user *model.User) error {
 	var count int
 	err = r.db.DB().QueryRowContext(ctx, selectQ, args...).Scan(&count)
 	if err != nil {
-		return status.Errorf(codes.Internal, "Failed to select user: %v", err)
+		return errors.ErrFailedToSelectQuery(err)
 	}
 
 	if count == 0 {
-		return status.Errorf(codes.NotFound, "User with id %d not found", user.ID)
+		return errors.ErrObjectNotFount("user", user.ID)
 	}
 
 	builderDelete := sq.Delete(tableName).
@@ -48,7 +47,7 @@ func (r *repo) Delete(ctx context.Context, user *model.User) error {
 
 	query, args, err := builderDelete.ToSql()
 	if err != nil {
-		return status.Errorf(codes.Internal, "Failed to build delete query: %v", err)
+		return errors.ErrFailedToBuildQuery(err)
 	}
 
 	q := db.Query{
@@ -58,7 +57,7 @@ func (r *repo) Delete(ctx context.Context, user *model.User) error {
 
 	_, err = r.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
-		return status.Errorf(codes.Internal, "Failed to delete user: %v", err)
+		return errors.ErrFailedToDeleteQuery(err)
 	}
 
 	return nil

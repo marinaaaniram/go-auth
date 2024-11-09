@@ -5,10 +5,9 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/marinaaaniram/go-auth/internal/client/db"
+	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	converterRepo "github.com/marinaaaniram/go-auth/internal/repository/user/converter"
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
@@ -17,7 +16,7 @@ import (
 // Get User in repository layer
 func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 	if user == nil {
-		return nil, status.Error(codes.Internal, "user is nil")
+		return nil, errors.ErrPointerIsNil("user")
 	}
 
 	builderSelect := sq.Select(idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn).
@@ -27,7 +26,7 @@ func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 
 	query, args, err := builderSelect.ToSql()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to build select query: %v", err)
+		return nil, errors.ErrFailedToBuildQuery(err)
 	}
 
 	q := db.Query{
@@ -39,9 +38,9 @@ func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&repoUser.ID, &repoUser.Name, &repoUser.Email, &repoUser.Role, &repoUser.CreatedAt, &repoUser.UpdatedAt)
 	if err != nil {
 		if err.Error() == pgx.ErrNoRows.Error() {
-			return nil, status.Errorf(codes.NotFound, "User with id %d not found", user.ID)
+			return nil, errors.ErrObjectNotFount("user", user.ID)
 		}
-		return nil, status.Errorf(codes.Internal, "Failed to query user: %v", err)
+		return nil, errors.ErrFailedToSelectQuery(err)
 	}
 
 	return converterRepo.FromRepoToUser(&repoUser), nil

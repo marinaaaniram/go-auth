@@ -6,17 +6,16 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/marinaaaniram/go-auth/internal/client/db"
+	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Update User in repository layer
 func (r *repo) Update(ctx context.Context, user *model.User) error {
 	if user == nil {
-		return status.Error(codes.Internal, "user is nil")
+		return errors.ErrPointerIsNil("user")
 	}
 
 	builderUpdate := sq.Update(tableName).
@@ -28,7 +27,7 @@ func (r *repo) Update(ctx context.Context, user *model.User) error {
 
 	query, args, err := builderUpdate.ToSql()
 	if err != nil {
-		log.Fatalf("Failed to build query: %v", err)
+		return errors.ErrFailedToBuildQuery(err)
 	}
 
 	q := db.Query{
@@ -38,7 +37,7 @@ func (r *repo) Update(ctx context.Context, user *model.User) error {
 
 	res, err := r.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
-		log.Fatalf("Failed to update user: %v", err)
+		return errors.ErrFailedToUpdateQuery(err)
 	}
 
 	log.Printf("Updated %d rows", res.RowsAffected())

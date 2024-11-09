@@ -5,10 +5,9 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/marinaaaniram/go-auth/internal/client/db"
+	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	converterRepo "github.com/marinaaaniram/go-auth/internal/repository/user/converter"
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
@@ -17,7 +16,7 @@ import (
 // Create User in repository layer
 func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error) {
 	if user == nil {
-		return nil, status.Error(codes.Internal, "user is nil")
+		return nil, errors.ErrPointerIsNil("user")
 	}
 
 	builderInsert := sq.Insert(tableName).
@@ -28,7 +27,7 @@ func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error
 
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to build query: %v", err)
+		return nil, errors.ErrFailedToBuildQuery(err)
 	}
 
 	q := db.Query{
@@ -39,7 +38,7 @@ func (r *repo) Create(ctx context.Context, user *model.User) (*model.User, error
 	var repoUser modelRepo.User
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&repoUser.ID, &repoUser.Name, &repoUser.Email, &repoUser.Role, &repoUser.CreatedAt, &repoUser.UpdatedAt)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Failed to insert user: %v", err)
+		return nil, errors.ErrFailedToInsertQuery(err)
 	}
 
 	return converterRepo.FromRepoToUser(&repoUser), nil
