@@ -22,6 +22,6 @@ type repo struct {
 }
 
 // Create User repository
-func NewRepository(db db.Client) repository.UserRepository {
+func NewUserRepository(db db.Client) repository.UserRepository {
 	return &repo{db: db}
 }

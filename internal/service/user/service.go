@@ -10,7 +10,7 @@ type serv struct {
 }
 
 // Create User service
-func NewService(userRepository repository.UserRepository) service.UserService {
+func NewUserService(userRepository repository.UserRepository) service.UserService {
 	return &serv{
 		userRepository: userRepository,
 	}

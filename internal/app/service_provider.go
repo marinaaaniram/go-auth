@@ -93,7 +93,7 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 // Init User repository
 func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.UserRepository {
 	if s.userRepository == nil {
-		s.userRepository = userRepository.NewRepository(s.DBClient(ctx))
+		s.userRepository = userRepository.NewUserRepository(s.DBClient(ctx))
 	}
 
 	return s.userRepository
@@ -102,7 +102,7 @@ func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.User
 // Init User service
 func (s *serviceProvider) GetUserService(ctx context.Context) service.UserService {
 	if s.userService == nil {
-		s.userService = userService.NewService(s.GetUserRepository(ctx))
+		s.userService = userService.NewUserService(s.GetUserRepository(ctx))
 	}
 
 	return s.userService
@@ -111,7 +111,7 @@ func (s *serviceProvider) GetUserService(ctx context.Context) service.UserServic
 // Init User implementaion
 func (s *serviceProvider) GetUserImpl(ctx context.Context) *user.Implementation {
 	if s.userImpl == nil {
-		s.userImpl = user.NewImplementation(s.GetUserService(ctx))
+		s.userImpl = user.NewUserImplementation(s.GetUserService(ctx))
 	}
 
 	return s.userImpl
