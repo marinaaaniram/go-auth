@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 
+	"github.com/marinaaaniram/go-auth/internal/converter"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
@@ -13,15 +14,15 @@ func (i *Implementation) Get(ctx context.Context, req *desc.GetRequest) (*desc.G
 		return nil, errors.ErrPointerIsNil("req")
 	}
 
-	userDesc, err := i.userService.Get(ctx, req.GetId())
+	userObj, err := i.userService.Get(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
-	if userDesc == nil {
+	if userObj == nil {
 		return nil, errors.ErrPointerIsNil("userDesc")
 	}
 
 	return &desc.GetResponse{
-		User: userDesc,
+		User: converter.FromUserToDesc(userObj),
 	}, nil
 }
