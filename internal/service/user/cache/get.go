@@ -6,6 +6,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
+// Get User in cache
 func (s *serv) Get(ctx context.Context, id int64) (*model.User, error) {
 	userObj, err := s.userRedisRepository.Get(ctx, id)
 	if err != nil {
@@ -15,6 +16,7 @@ func (s *serv) Get(ctx context.Context, id int64) (*model.User, error) {
 	return userObj, nil
 }
 
+// Create User in cache
 func (s *serv) Create(ctx context.Context, info *model.User) (int64, error) {
 	var id int64
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {

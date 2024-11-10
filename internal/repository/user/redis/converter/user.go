@@ -7,6 +7,7 @@ import (
 	modelRedis "github.com/marinaaaniram/go-auth/internal/repository/user/redis/model"
 )
 
+// Convert User model redis to internal model
 func FromRedisToModel(user *modelRedis.User) *model.User {
 	var updatedAt time.Time
 	if user.UpdatedAtNs != nil {

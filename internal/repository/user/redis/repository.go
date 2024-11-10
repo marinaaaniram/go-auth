@@ -17,10 +17,12 @@ type repo struct {
 	cl cache.RedisClient
 }
 
+// Create Redis repository
 func NewRedisRepository(cl cache.RedisClient) repository.UserRedisRepository {
 	return &repo{cl: cl}
 }
 
+// Create User in redis
 func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
 	id := int64(1)
 
@@ -33,6 +35,7 @@ func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
 	return id, nil
 }
 
+// Create User from redis
 func (r *repo) Get(ctx context.Context, id int64) (*model.User, error) {
 	idStr := strconv.FormatInt(id, 10)
 	values, err := r.cl.HGetAll(ctx, idStr)

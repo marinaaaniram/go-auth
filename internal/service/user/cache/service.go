@@ -11,7 +11,7 @@ type serv struct {
 	txManager           db.TxManager
 }
 
-// Create User service
+// Create User cache service
 func NewUserCacheService(userRedisRepository repository.UserRedisRepository, txManager db.TxManager) service.UserCacheService {
 	return &serv{
 		userRedisRepository: userRedisRepository,

@@ -7,7 +7,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
-// Get user_v1 in service layer
+// Get User in service layer
 func (s *serv) Get(ctx context.Context, id int64) (*model.User, error) {
 	if s.userCacheService != nil {
 		userObj, err := s.userCacheService.Get(ctx, id)

@@ -7,7 +7,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
-// Create user_v1 in service layer
+// Create User in service layer
 func (s *serv) Create(ctx context.Context, user *model.User) (int64, error) {
 	if user == nil {
 		return 0, errors.ErrPointerIsNil("user")

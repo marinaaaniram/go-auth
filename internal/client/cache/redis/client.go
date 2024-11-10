@@ -20,6 +20,7 @@ type client struct {
 	config config.RedisConfig
 }
 
+// Init new client
 func NewClient(pool *redis.Pool, config config.RedisConfig) *client {
 	return &client{
 		pool:   pool,
@@ -27,6 +28,7 @@ func NewClient(pool *redis.Pool, config config.RedisConfig) *client {
 	}
 }
 
+// Init HashSet
 func (c *client) HashSet(ctx context.Context, key string, values interface{}) error {
 	err := c.execute(ctx, func(ctx context.Context, conn redis.Conn) error {
 		_, err := conn.Do("HSET", redis.Args{key}.AddFlat(values)...)
@@ -43,6 +45,7 @@ func (c *client) HashSet(ctx context.Context, key string, values interface{}) er
 	return nil
 }
 
+// Init Set
 func (c *client) Set(ctx context.Context, key string, value interface{}) error {
 	err := c.execute(ctx, func(ctx context.Context, conn redis.Conn) error {
 		_, err := conn.Do("SET", redis.Args{key}.Add(value)...)
@@ -59,6 +62,7 @@ func (c *client) Set(ctx context.Context, key string, value interface{}) error {
 	return nil
 }
 
+// Init HGetAll
 func (c *client) HGetAll(ctx context.Context, key string) ([]interface{}, error) {
 	var values []interface{}
 	err := c.execute(ctx, func(ctx context.Context, conn redis.Conn) error {
@@ -77,6 +81,7 @@ func (c *client) HGetAll(ctx context.Context, key string) ([]interface{}, error)
 	return values, nil
 }
 
+// Init Get
 func (c *client) Get(ctx context.Context, key string) (interface{}, error) {
 	var value interface{}
 	err := c.execute(ctx, func(ctx context.Context, conn redis.Conn) error {
@@ -95,6 +100,7 @@ func (c *client) Get(ctx context.Context, key string) (interface{}, error) {
 	return value, nil
 }
 
+// Init Expire
 func (c *client) Expire(ctx context.Context, key string, expiration time.Duration) error {
 	err := c.execute(ctx, func(ctx context.Context, conn redis.Conn) error {
 		_, err := conn.Do("EXPIRE", key, int(expiration.Seconds()))
@@ -111,6 +117,7 @@ func (c *client) Expire(ctx context.Context, key string, expiration time.Duratio
 	return nil
 }
 
+// Init Ping
 func (c *client) Ping(ctx context.Context) error {
 	err := c.execute(ctx, func(ctx context.Context, conn redis.Conn) error {
 		_, err := conn.Do("PING")
@@ -127,6 +134,7 @@ func (c *client) Ping(ctx context.Context) error {
 	return nil
 }
 
+// Execute redis
 func (c *client) execute(ctx context.Context, handler handler) error {
 	conn, err := c.getConnect(ctx)
 	if err != nil {
@@ -147,6 +155,7 @@ func (c *client) execute(ctx context.Context, handler handler) error {
 	return nil
 }
 
+// Get redis connection
 func (c *client) getConnect(ctx context.Context) (redis.Conn, error) {
 	getConnTimeoutCtx, cancel := context.WithTimeout(ctx, c.config.ConnectionTimeout())
 	defer cancel()

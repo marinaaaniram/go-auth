@@ -7,7 +7,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
-// Update user_v1 in service layer
+// Update User in service layer
 func (s *serv) Update(ctx context.Context, user *model.User) error {
 	if user == nil {
 		return errors.ErrPointerIsNil("user")
