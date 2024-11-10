@@ -11,12 +11,14 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
+	"github.com/marinaaaniram/go-auth/internal/service"
 	"github.com/marinaaaniram/go-auth/internal/service/user"
 )
 
 func TestServiceUserDelete(t *testing.T) {
 	t.Parallel()
 	type userRepositoryMockFunc func(mc *minimock.Controller) repository.UserRepository
+	type userCacheServiceMockFunc func(mc *minimock.Controller) service.UserCacheService
 
 	type args struct {
 		ctx context.Context
@@ -34,11 +36,12 @@ func TestServiceUserDelete(t *testing.T) {
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name               string
-		args               args
-		want               int64
-		err                error
-		userRepositoryMock userRepositoryMockFunc
+		name                 string
+		args                 args
+		want                 int64
+		err                  error
+		userRepositoryMock   userRepositoryMockFunc
+		userCacheServiceMock userCacheServiceMockFunc
 	}{
 		{
 			name: "Success case",
@@ -52,6 +55,9 @@ func TestServiceUserDelete(t *testing.T) {
 				mock := repoMocks.NewUserRepositoryMock(mc)
 				mock.DeleteMock.Expect(ctx, id).Return(nil)
 				return mock
+			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
 			},
 		},
 		{
@@ -67,6 +73,9 @@ func TestServiceUserDelete(t *testing.T) {
 				mock.DeleteMock.Expect(ctx, id).Return(repoErr)
 				return mock
 			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
 		},
 	}
 
@@ -76,7 +85,8 @@ func TestServiceUserDelete(t *testing.T) {
 			t.Parallel()
 
 			userRepoMock := tt.userRepositoryMock(mc)
-			service := user.NewUserService(userRepoMock)
+			userCacheMock := tt.userCacheServiceMock(mc)
+			service := user.NewUserService(userRepoMock, userCacheMock)
 
 			err := service.Delete(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)

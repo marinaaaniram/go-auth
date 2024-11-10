@@ -12,12 +12,14 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
+	"github.com/marinaaaniram/go-auth/internal/service"
 	"github.com/marinaaaniram/go-auth/internal/service/user"
 )
 
 func TestServiceUserUpdate(t *testing.T) {
 	t.Parallel()
 	type userRepositoryMockFunc func(mc *minimock.Controller) repository.UserRepository
+	type userCacheServiceMockFunc func(mc *minimock.Controller) service.UserCacheService
 
 	type args struct {
 		ctx context.Context
@@ -53,11 +55,12 @@ func TestServiceUserUpdate(t *testing.T) {
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name               string
-		args               args
-		want               *model.User
-		err                error
-		userRepositoryMock userRepositoryMockFunc
+		name                 string
+		args                 args
+		want                 *model.User
+		err                  error
+		userRepositoryMock   userRepositoryMockFunc
+		userCacheServiceMock userCacheServiceMockFunc
 	}{
 		{
 			name: "Success case 1",
@@ -71,6 +74,9 @@ func TestServiceUserUpdate(t *testing.T) {
 				mock := repoMocks.NewUserRepositoryMock(mc)
 				mock.UpdateMock.Expect(ctx, req).Return(nil)
 				return mock
+			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
 			},
 		},
 		{
@@ -86,6 +92,9 @@ func TestServiceUserUpdate(t *testing.T) {
 				mock.UpdateMock.Expect(ctx, req_2).Return(nil)
 				return mock
 			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
 		},
 		{
 			name: "Success case 3",
@@ -99,6 +108,9 @@ func TestServiceUserUpdate(t *testing.T) {
 				mock := repoMocks.NewUserRepositoryMock(mc)
 				mock.UpdateMock.Expect(ctx, req_3).Return(nil)
 				return mock
+			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
 			},
 		},
 		{
@@ -114,6 +126,9 @@ func TestServiceUserUpdate(t *testing.T) {
 				mock.UpdateMock.Expect(ctx, req).Return(repoErr)
 				return mock
 			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
 		},
 	}
 
@@ -123,7 +138,8 @@ func TestServiceUserUpdate(t *testing.T) {
 			t.Parallel()
 
 			userRepoMock := tt.userRepositoryMock(mc)
-			service := user.NewUserService(userRepoMock)
+			userCacheMock := tt.userCacheServiceMock(mc)
+			service := user.NewUserService(userRepoMock, userCacheMock)
 
 			err := service.Update(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)

@@ -1,4 +1,4 @@
-package config
+package env
 
 import (
 	"net"
@@ -12,25 +12,20 @@ const (
 	grpcPortEnvName = "GRPC_PORT"
 )
 
-type GRPCConfig interface {
-	Address() string
-}
-
 type grpcConfig struct {
 	host string
 	port string
 }
 
-// Create GRPS congig
-func NewGRPCConfig() (GRPCConfig, error) {
+func NewGRPCConfig() (*grpcConfig, error) {
 	host := os.Getenv(grpcHostEnvName)
 	if len(host) == 0 {
-		return nil, errors.New("GRPC host not found")
+		return nil, errors.New("grpc host not found")
 	}
 
 	port := os.Getenv(grpcPortEnvName)
 	if len(port) == 0 {
-		return nil, errors.New("GRPC port not found")
+		return nil, errors.New("grpc port not found")
 	}
 
 	return &grpcConfig{
@@ -39,7 +34,6 @@ func NewGRPCConfig() (GRPCConfig, error) {
 	}, nil
 }
 
-// Get Address
 func (cfg *grpcConfig) Address() string {
 	return net.JoinHostPort(cfg.host, cfg.port)
 }

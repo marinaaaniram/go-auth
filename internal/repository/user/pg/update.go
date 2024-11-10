@@ -9,7 +9,7 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
-	"github.com/marinaaaniram/go-auth/internal/repository/user/converter"
+	"github.com/marinaaaniram/go-auth/internal/repository/user/pg/converter"
 )
 
 // Update User in repository layer

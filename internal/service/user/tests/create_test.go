@@ -13,12 +13,14 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
+	"github.com/marinaaaniram/go-auth/internal/service"
 	"github.com/marinaaaniram/go-auth/internal/service/user"
 )
 
 func TestServiceUserCreate(t *testing.T) {
 	t.Parallel()
 	type userRepositoryMockFunc func(mc *minimock.Controller) repository.UserRepository
+	type userCacheServiceMockFunc func(mc *minimock.Controller) service.UserCacheService
 
 	type args struct {
 		ctx context.Context
@@ -47,11 +49,12 @@ func TestServiceUserCreate(t *testing.T) {
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name               string
-		args               args
-		want               int64
-		err                error
-		userRepositoryMock userRepositoryMockFunc
+		name                 string
+		args                 args
+		want                 int64
+		err                  error
+		userRepositoryMock   userRepositoryMockFunc
+		userCacheServiceMock userCacheServiceMockFunc
 	}{
 		{
 			name: "Success case",
@@ -66,6 +69,9 @@ func TestServiceUserCreate(t *testing.T) {
 				mock.CreateMock.Expect(ctx, req).Return(id, nil)
 				return mock
 			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
 		},
 		{
 			name: "Api nil pointer",
@@ -76,6 +82,9 @@ func TestServiceUserCreate(t *testing.T) {
 			want: 0,
 			err:  errors.ErrPointerIsNil("user"),
 			userRepositoryMock: func(mc *minimock.Controller) repository.UserRepository {
+				return nil
+			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
 				return nil
 			},
 		},
@@ -92,6 +101,9 @@ func TestServiceUserCreate(t *testing.T) {
 				mock.CreateMock.Expect(ctx, req).Return(0, repoErr)
 				return mock
 			},
+			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
 		},
 	}
 
@@ -101,7 +113,8 @@ func TestServiceUserCreate(t *testing.T) {
 			t.Parallel()
 
 			userRepoMock := tt.userRepositoryMock(mc)
-			service := user.NewUserService(userRepoMock)
+			userCacheMock := tt.userCacheServiceMock(mc)
+			service := user.NewUserService(userRepoMock, userCacheMock)
 
 			newID, err := service.Create(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)

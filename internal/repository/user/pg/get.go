@@ -9,8 +9,8 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
-	converterRepo "github.com/marinaaaniram/go-auth/internal/repository/user/converter"
-	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
+	converterRepo "github.com/marinaaaniram/go-auth/internal/repository/user/pg/converter"
+	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/pg/model"
 )
 
 // Get User in repository layer
@@ -39,5 +39,7 @@ func (r *repo) Get(ctx context.Context, id int64) (*model.User, error) {
 		return nil, errors.ErrFailedToSelectQuery(err)
 	}
 
-	return converterRepo.FromRepoToUserGet(&repoUser), nil
+	user := converterRepo.FromRepoToUserGet(&repoUser)
+
+	return user, nil
 }

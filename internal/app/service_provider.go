@@ -4,28 +4,41 @@ import (
 	"context"
 	"log"
 
+	redigo "github.com/gomodule/redigo/redis"
 	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
 	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
+	"github.com/marinaaaniram/go-auth/internal/client/cache"
+	"github.com/marinaaaniram/go-auth/internal/client/cache/redis"
 	"github.com/marinaaaniram/go-auth/internal/config"
+	"github.com/marinaaaniram/go-auth/internal/config/env"
 	"github.com/marinaaaniram/go-auth/internal/repository"
-	userRepository "github.com/marinaaaniram/go-auth/internal/repository/user"
+	userRepository "github.com/marinaaaniram/go-auth/internal/repository/user/pg"
+	userRedisRepository "github.com/marinaaaniram/go-auth/internal/repository/user/redis"
 	"github.com/marinaaaniram/go-auth/internal/service"
 	userService "github.com/marinaaaniram/go-auth/internal/service/user"
+	userCacheService "github.com/marinaaaniram/go-auth/internal/service/user/cache"
 )
 
 type serviceProvider struct {
-	pgConfig   config.PGConfig
-	grpcConfig config.GRPCConfig
+	pgConfig    config.PGConfig
+	grpcConfig  config.GRPCConfig
+	redisConfig config.RedisConfig
 
-	dbClient       db.Client
-	txManager      db.TxManager
-	userRepository repository.UserRepository
+	dbClient  db.Client
+	txManager db.TxManager
 
-	userService service.UserService
+	redisPool   *redigo.Pool
+	redisClient cache.RedisClient
+
+	userRepository      repository.UserRepository
+	userRedisRepository repository.UserRedisRepository
+
+	userService      service.UserService
+	userCacheService service.UserCacheService
 
 	userImpl *user.Implementation
 }
@@ -35,9 +48,9 @@ func newServiceProvider() *serviceProvider {
 }
 
 // Get postgres config
-func (s *serviceProvider) GetPGConfig() config.PGConfig {
+func (s *serviceProvider) PGConfig() config.PGConfig {
 	if s.pgConfig == nil {
-		cfg, err := config.NewPGConfig()
+		cfg, err := env.NewPGConfig()
 		if err != nil {
 			log.Fatalf("failed to get pg config: %s", err.Error())
 		}
@@ -49,9 +62,9 @@ func (s *serviceProvider) GetPGConfig() config.PGConfig {
 }
 
 // Get GRPC config
-func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
+func (s *serviceProvider) GRPCConfig() config.GRPCConfig {
 	if s.grpcConfig == nil {
-		cfg, err := config.NewGRPCConfig()
+		cfg, err := env.NewGRPCConfig()
 		if err != nil {
 			log.Fatalf("failed to get grpc config: %s", err.Error())
 		}
@@ -62,10 +75,24 @@ func (s *serviceProvider) GetGRPCConfig() config.GRPCConfig {
 	return s.grpcConfig
 }
 
+// Get redis config
+func (s *serviceProvider) RedisConfig() config.RedisConfig {
+	if s.redisConfig == nil {
+		cfg, err := env.NewRedisConfig()
+		if err != nil {
+			log.Fatalf("failed to get redis config: %s", err.Error())
+		}
+
+		s.redisConfig = cfg
+	}
+
+	return s.redisConfig
+}
+
 // Init db client
 func (s *serviceProvider) DBClient(ctx context.Context) db.Client {
 	if s.dbClient == nil {
-		cl, err := pg.New(ctx, s.GetPGConfig().DSN())
+		cl, err := pg.New(ctx, s.PGConfig().DSN())
 		if err != nil {
 			log.Fatalf("failed to create db client: %v", err)
 		}
@@ -91,6 +118,30 @@ func (s *serviceProvider) TxManager(ctx context.Context) db.TxManager {
 	return s.txManager
 }
 
+// Init redis pool
+func (s *serviceProvider) RedisPool() *redigo.Pool {
+	if s.redisPool == nil {
+		s.redisPool = &redigo.Pool{
+			MaxIdle:     s.RedisConfig().MaxIdle(),
+			IdleTimeout: s.RedisConfig().IdleTimeout(),
+			DialContext: func(ctx context.Context) (redigo.Conn, error) {
+				return redigo.DialContext(ctx, "tcp", s.RedisConfig().Address())
+			},
+		}
+	}
+
+	return s.redisPool
+}
+
+// Init redis client
+func (s *serviceProvider) RedisClient(ctx context.Context) cache.RedisClient {
+	if s.redisClient == nil {
+		s.redisClient = redis.NewClient(s.RedisPool(), s.RedisConfig())
+	}
+
+	return s.redisClient
+}
+
 // Init User repository
 func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.UserRepository {
 	if s.userRepository == nil {
@@ -100,10 +151,28 @@ func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.User
 	return s.userRepository
 }
 
+// Init User repository
+func (s *serviceProvider) GetUserRedisRepository(ctx context.Context) repository.UserRedisRepository {
+	if s.userRedisRepository == nil {
+		s.userRedisRepository = userRedisRepository.NewRedisRepository(s.RedisClient(ctx))
+	}
+
+	return s.userRedisRepository
+}
+
+// Init User cache service
+func (s *serviceProvider) GetUserCacheService(ctx context.Context) service.UserCacheService {
+	if s.userCacheService == nil {
+		s.userCacheService = userCacheService.NewUserCacheService(s.GetUserRedisRepository(ctx), s.txManager)
+	}
+
+	return s.userCacheService
+}
+
 // Init User service
 func (s *serviceProvider) GetUserService(ctx context.Context) service.UserService {
 	if s.userService == nil {
-		s.userService = userService.NewUserService(s.GetUserRepository(ctx))
+		s.userService = userService.NewUserService(s.GetUserRepository(ctx), s.GetUserCacheService(ctx))
 	}
 
 	return s.userService

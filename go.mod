@@ -6,13 +6,14 @@ require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/gojuno/minimock/v3 v3.4.2
+	github.com/gomodule/redigo v1.9.2
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/joho/godotenv v1.5.1
 	github.com/marinaaaniram/go-common-platform v0.0.0-20241110195851-754179088c4d
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto v0.28.0
-	google.golang.org/grpc v1.67.1
+	google.golang.org/grpc v1.65.0
 	google.golang.org/protobuf v1.35.1
 )
 
