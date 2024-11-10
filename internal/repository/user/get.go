@@ -14,15 +14,11 @@ import (
 )
 
 // Get User in repository layer
-func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
-	if user == nil {
-		return nil, errors.ErrPointerIsNil("user")
-	}
-
+func (r *repo) Get(ctx context.Context, id int64) (*model.User, error) {
 	builder := sq.Select(idColumn, nameColumn, emailColumn, roleColumn, createdAtColumn, updatedAtColumn).
 		From(tableName).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{idColumn: user.ID})
+		Where(sq.Eq{idColumn: id})
 
 	query, args, err := builder.ToSql()
 	if err != nil {
@@ -38,7 +34,7 @@ func (r *repo) Get(ctx context.Context, user *model.User) (*model.User, error) {
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&repoUser.ID, &repoUser.Name, &repoUser.Email, &repoUser.Role, &repoUser.CreatedAt, &repoUser.UpdatedAt)
 	if err != nil {
 		if err.Error() == pgx.ErrNoRows.Error() {
-			return nil, errors.ErrObjectNotFount("user", user.ID)
+			return nil, errors.ErrObjectNotFount("user", id)
 		}
 		return nil, errors.ErrFailedToSelectQuery(err)
 	}

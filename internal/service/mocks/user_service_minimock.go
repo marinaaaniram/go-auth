@@ -26,14 +26,14 @@ type UserServiceMock struct {
 	beforeCreateCounter uint64
 	CreateMock          mUserServiceMockCreate
 
-	funcDelete          func(ctx context.Context, user *model.User) (err error)
-	inspectFuncDelete   func(ctx context.Context, user *model.User)
+	funcDelete          func(ctx context.Context, id int64) (err error)
+	inspectFuncDelete   func(ctx context.Context, id int64)
 	afterDeleteCounter  uint64
 	beforeDeleteCounter uint64
 	DeleteMock          mUserServiceMockDelete
 
-	funcGet          func(ctx context.Context, user *model.User) (up1 *desc.User, err error)
-	inspectFuncGet   func(ctx context.Context, user *model.User)
+	funcGet          func(ctx context.Context, id int64) (up1 *desc.User, err error)
+	inspectFuncGet   func(ctx context.Context, id int64)
 	afterGetCounter  uint64
 	beforeGetCounter uint64
 	GetMock          mUserServiceMockGet
@@ -414,14 +414,14 @@ type UserServiceMockDeleteExpectation struct {
 
 // UserServiceMockDeleteParams contains parameters of the UserService.Delete
 type UserServiceMockDeleteParams struct {
-	ctx  context.Context
-	user *model.User
+	ctx context.Context
+	id  int64
 }
 
 // UserServiceMockDeleteParamPtrs contains pointers to parameters of the UserService.Delete
 type UserServiceMockDeleteParamPtrs struct {
-	ctx  *context.Context
-	user **model.User
+	ctx *context.Context
+	id  *int64
 }
 
 // UserServiceMockDeleteResults contains results of the UserService.Delete
@@ -440,7 +440,7 @@ func (mmDelete *mUserServiceMockDelete) Optional() *mUserServiceMockDelete {
 }
 
 // Expect sets up expected params for UserService.Delete
-func (mmDelete *mUserServiceMockDelete) Expect(ctx context.Context, user *model.User) *mUserServiceMockDelete {
+func (mmDelete *mUserServiceMockDelete) Expect(ctx context.Context, id int64) *mUserServiceMockDelete {
 	if mmDelete.mock.funcDelete != nil {
 		mmDelete.mock.t.Fatalf("UserServiceMock.Delete mock is already set by Set")
 	}
@@ -453,7 +453,7 @@ func (mmDelete *mUserServiceMockDelete) Expect(ctx context.Context, user *model.
 		mmDelete.mock.t.Fatalf("UserServiceMock.Delete mock is already set by ExpectParams functions")
 	}
 
-	mmDelete.defaultExpectation.params = &UserServiceMockDeleteParams{ctx, user}
+	mmDelete.defaultExpectation.params = &UserServiceMockDeleteParams{ctx, id}
 	for _, e := range mmDelete.expectations {
 		if minimock.Equal(e.params, mmDelete.defaultExpectation.params) {
 			mmDelete.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmDelete.defaultExpectation.params)
@@ -485,8 +485,8 @@ func (mmDelete *mUserServiceMockDelete) ExpectCtxParam1(ctx context.Context) *mU
 	return mmDelete
 }
 
-// ExpectUserParam2 sets up expected param user for UserService.Delete
-func (mmDelete *mUserServiceMockDelete) ExpectUserParam2(user *model.User) *mUserServiceMockDelete {
+// ExpectIdParam2 sets up expected param id for UserService.Delete
+func (mmDelete *mUserServiceMockDelete) ExpectIdParam2(id int64) *mUserServiceMockDelete {
 	if mmDelete.mock.funcDelete != nil {
 		mmDelete.mock.t.Fatalf("UserServiceMock.Delete mock is already set by Set")
 	}
@@ -502,13 +502,13 @@ func (mmDelete *mUserServiceMockDelete) ExpectUserParam2(user *model.User) *mUse
 	if mmDelete.defaultExpectation.paramPtrs == nil {
 		mmDelete.defaultExpectation.paramPtrs = &UserServiceMockDeleteParamPtrs{}
 	}
-	mmDelete.defaultExpectation.paramPtrs.user = &user
+	mmDelete.defaultExpectation.paramPtrs.id = &id
 
 	return mmDelete
 }
 
 // Inspect accepts an inspector function that has same arguments as the UserService.Delete
-func (mmDelete *mUserServiceMockDelete) Inspect(f func(ctx context.Context, user *model.User)) *mUserServiceMockDelete {
+func (mmDelete *mUserServiceMockDelete) Inspect(f func(ctx context.Context, id int64)) *mUserServiceMockDelete {
 	if mmDelete.mock.inspectFuncDelete != nil {
 		mmDelete.mock.t.Fatalf("Inspect function is already set for UserServiceMock.Delete")
 	}
@@ -532,7 +532,7 @@ func (mmDelete *mUserServiceMockDelete) Return(err error) *UserServiceMock {
 }
 
 // Set uses given function f to mock the UserService.Delete method
-func (mmDelete *mUserServiceMockDelete) Set(f func(ctx context.Context, user *model.User) (err error)) *UserServiceMock {
+func (mmDelete *mUserServiceMockDelete) Set(f func(ctx context.Context, id int64) (err error)) *UserServiceMock {
 	if mmDelete.defaultExpectation != nil {
 		mmDelete.mock.t.Fatalf("Default expectation is already set for the UserService.Delete method")
 	}
@@ -547,14 +547,14 @@ func (mmDelete *mUserServiceMockDelete) Set(f func(ctx context.Context, user *mo
 
 // When sets expectation for the UserService.Delete which will trigger the result defined by the following
 // Then helper
-func (mmDelete *mUserServiceMockDelete) When(ctx context.Context, user *model.User) *UserServiceMockDeleteExpectation {
+func (mmDelete *mUserServiceMockDelete) When(ctx context.Context, id int64) *UserServiceMockDeleteExpectation {
 	if mmDelete.mock.funcDelete != nil {
 		mmDelete.mock.t.Fatalf("UserServiceMock.Delete mock is already set by Set")
 	}
 
 	expectation := &UserServiceMockDeleteExpectation{
 		mock:   mmDelete.mock,
-		params: &UserServiceMockDeleteParams{ctx, user},
+		params: &UserServiceMockDeleteParams{ctx, id},
 	}
 	mmDelete.expectations = append(mmDelete.expectations, expectation)
 	return expectation
@@ -587,15 +587,15 @@ func (mmDelete *mUserServiceMockDelete) invocationsDone() bool {
 }
 
 // Delete implements service.UserService
-func (mmDelete *UserServiceMock) Delete(ctx context.Context, user *model.User) (err error) {
+func (mmDelete *UserServiceMock) Delete(ctx context.Context, id int64) (err error) {
 	mm_atomic.AddUint64(&mmDelete.beforeDeleteCounter, 1)
 	defer mm_atomic.AddUint64(&mmDelete.afterDeleteCounter, 1)
 
 	if mmDelete.inspectFuncDelete != nil {
-		mmDelete.inspectFuncDelete(ctx, user)
+		mmDelete.inspectFuncDelete(ctx, id)
 	}
 
-	mm_params := UserServiceMockDeleteParams{ctx, user}
+	mm_params := UserServiceMockDeleteParams{ctx, id}
 
 	// Record call args
 	mmDelete.DeleteMock.mutex.Lock()
@@ -614,7 +614,7 @@ func (mmDelete *UserServiceMock) Delete(ctx context.Context, user *model.User) (
 		mm_want := mmDelete.DeleteMock.defaultExpectation.params
 		mm_want_ptrs := mmDelete.DeleteMock.defaultExpectation.paramPtrs
 
-		mm_got := UserServiceMockDeleteParams{ctx, user}
+		mm_got := UserServiceMockDeleteParams{ctx, id}
 
 		if mm_want_ptrs != nil {
 
@@ -622,8 +622,8 @@ func (mmDelete *UserServiceMock) Delete(ctx context.Context, user *model.User) (
 				mmDelete.t.Errorf("UserServiceMock.Delete got unexpected parameter ctx, want: %#v, got: %#v%s\n", *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
-			if mm_want_ptrs.user != nil && !minimock.Equal(*mm_want_ptrs.user, mm_got.user) {
-				mmDelete.t.Errorf("UserServiceMock.Delete got unexpected parameter user, want: %#v, got: %#v%s\n", *mm_want_ptrs.user, mm_got.user, minimock.Diff(*mm_want_ptrs.user, mm_got.user))
+			if mm_want_ptrs.id != nil && !minimock.Equal(*mm_want_ptrs.id, mm_got.id) {
+				mmDelete.t.Errorf("UserServiceMock.Delete got unexpected parameter id, want: %#v, got: %#v%s\n", *mm_want_ptrs.id, mm_got.id, minimock.Diff(*mm_want_ptrs.id, mm_got.id))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
@@ -637,9 +637,9 @@ func (mmDelete *UserServiceMock) Delete(ctx context.Context, user *model.User) (
 		return (*mm_results).err
 	}
 	if mmDelete.funcDelete != nil {
-		return mmDelete.funcDelete(ctx, user)
+		return mmDelete.funcDelete(ctx, id)
 	}
-	mmDelete.t.Fatalf("Unexpected call to UserServiceMock.Delete. %v %v", ctx, user)
+	mmDelete.t.Fatalf("Unexpected call to UserServiceMock.Delete. %v %v", ctx, id)
 	return
 }
 
@@ -734,14 +734,14 @@ type UserServiceMockGetExpectation struct {
 
 // UserServiceMockGetParams contains parameters of the UserService.Get
 type UserServiceMockGetParams struct {
-	ctx  context.Context
-	user *model.User
+	ctx context.Context
+	id  int64
 }
 
 // UserServiceMockGetParamPtrs contains pointers to parameters of the UserService.Get
 type UserServiceMockGetParamPtrs struct {
-	ctx  *context.Context
-	user **model.User
+	ctx *context.Context
+	id  *int64
 }
 
 // UserServiceMockGetResults contains results of the UserService.Get
@@ -761,7 +761,7 @@ func (mmGet *mUserServiceMockGet) Optional() *mUserServiceMockGet {
 }
 
 // Expect sets up expected params for UserService.Get
-func (mmGet *mUserServiceMockGet) Expect(ctx context.Context, user *model.User) *mUserServiceMockGet {
+func (mmGet *mUserServiceMockGet) Expect(ctx context.Context, id int64) *mUserServiceMockGet {
 	if mmGet.mock.funcGet != nil {
 		mmGet.mock.t.Fatalf("UserServiceMock.Get mock is already set by Set")
 	}
@@ -774,7 +774,7 @@ func (mmGet *mUserServiceMockGet) Expect(ctx context.Context, user *model.User) 
 		mmGet.mock.t.Fatalf("UserServiceMock.Get mock is already set by ExpectParams functions")
 	}
 
-	mmGet.defaultExpectation.params = &UserServiceMockGetParams{ctx, user}
+	mmGet.defaultExpectation.params = &UserServiceMockGetParams{ctx, id}
 	for _, e := range mmGet.expectations {
 		if minimock.Equal(e.params, mmGet.defaultExpectation.params) {
 			mmGet.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmGet.defaultExpectation.params)
@@ -806,8 +806,8 @@ func (mmGet *mUserServiceMockGet) ExpectCtxParam1(ctx context.Context) *mUserSer
 	return mmGet
 }
 
-// ExpectUserParam2 sets up expected param user for UserService.Get
-func (mmGet *mUserServiceMockGet) ExpectUserParam2(user *model.User) *mUserServiceMockGet {
+// ExpectIdParam2 sets up expected param id for UserService.Get
+func (mmGet *mUserServiceMockGet) ExpectIdParam2(id int64) *mUserServiceMockGet {
 	if mmGet.mock.funcGet != nil {
 		mmGet.mock.t.Fatalf("UserServiceMock.Get mock is already set by Set")
 	}
@@ -823,13 +823,13 @@ func (mmGet *mUserServiceMockGet) ExpectUserParam2(user *model.User) *mUserServi
 	if mmGet.defaultExpectation.paramPtrs == nil {
 		mmGet.defaultExpectation.paramPtrs = &UserServiceMockGetParamPtrs{}
 	}
-	mmGet.defaultExpectation.paramPtrs.user = &user
+	mmGet.defaultExpectation.paramPtrs.id = &id
 
 	return mmGet
 }
 
 // Inspect accepts an inspector function that has same arguments as the UserService.Get
-func (mmGet *mUserServiceMockGet) Inspect(f func(ctx context.Context, user *model.User)) *mUserServiceMockGet {
+func (mmGet *mUserServiceMockGet) Inspect(f func(ctx context.Context, id int64)) *mUserServiceMockGet {
 	if mmGet.mock.inspectFuncGet != nil {
 		mmGet.mock.t.Fatalf("Inspect function is already set for UserServiceMock.Get")
 	}
@@ -853,7 +853,7 @@ func (mmGet *mUserServiceMockGet) Return(up1 *desc.User, err error) *UserService
 }
 
 // Set uses given function f to mock the UserService.Get method
-func (mmGet *mUserServiceMockGet) Set(f func(ctx context.Context, user *model.User) (up1 *desc.User, err error)) *UserServiceMock {
+func (mmGet *mUserServiceMockGet) Set(f func(ctx context.Context, id int64) (up1 *desc.User, err error)) *UserServiceMock {
 	if mmGet.defaultExpectation != nil {
 		mmGet.mock.t.Fatalf("Default expectation is already set for the UserService.Get method")
 	}
@@ -868,14 +868,14 @@ func (mmGet *mUserServiceMockGet) Set(f func(ctx context.Context, user *model.Us
 
 // When sets expectation for the UserService.Get which will trigger the result defined by the following
 // Then helper
-func (mmGet *mUserServiceMockGet) When(ctx context.Context, user *model.User) *UserServiceMockGetExpectation {
+func (mmGet *mUserServiceMockGet) When(ctx context.Context, id int64) *UserServiceMockGetExpectation {
 	if mmGet.mock.funcGet != nil {
 		mmGet.mock.t.Fatalf("UserServiceMock.Get mock is already set by Set")
 	}
 
 	expectation := &UserServiceMockGetExpectation{
 		mock:   mmGet.mock,
-		params: &UserServiceMockGetParams{ctx, user},
+		params: &UserServiceMockGetParams{ctx, id},
 	}
 	mmGet.expectations = append(mmGet.expectations, expectation)
 	return expectation
@@ -908,15 +908,15 @@ func (mmGet *mUserServiceMockGet) invocationsDone() bool {
 }
 
 // Get implements service.UserService
-func (mmGet *UserServiceMock) Get(ctx context.Context, user *model.User) (up1 *desc.User, err error) {
+func (mmGet *UserServiceMock) Get(ctx context.Context, id int64) (up1 *desc.User, err error) {
 	mm_atomic.AddUint64(&mmGet.beforeGetCounter, 1)
 	defer mm_atomic.AddUint64(&mmGet.afterGetCounter, 1)
 
 	if mmGet.inspectFuncGet != nil {
-		mmGet.inspectFuncGet(ctx, user)
+		mmGet.inspectFuncGet(ctx, id)
 	}
 
-	mm_params := UserServiceMockGetParams{ctx, user}
+	mm_params := UserServiceMockGetParams{ctx, id}
 
 	// Record call args
 	mmGet.GetMock.mutex.Lock()
@@ -935,7 +935,7 @@ func (mmGet *UserServiceMock) Get(ctx context.Context, user *model.User) (up1 *d
 		mm_want := mmGet.GetMock.defaultExpectation.params
 		mm_want_ptrs := mmGet.GetMock.defaultExpectation.paramPtrs
 
-		mm_got := UserServiceMockGetParams{ctx, user}
+		mm_got := UserServiceMockGetParams{ctx, id}
 
 		if mm_want_ptrs != nil {
 
@@ -943,8 +943,8 @@ func (mmGet *UserServiceMock) Get(ctx context.Context, user *model.User) (up1 *d
 				mmGet.t.Errorf("UserServiceMock.Get got unexpected parameter ctx, want: %#v, got: %#v%s\n", *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
-			if mm_want_ptrs.user != nil && !minimock.Equal(*mm_want_ptrs.user, mm_got.user) {
-				mmGet.t.Errorf("UserServiceMock.Get got unexpected parameter user, want: %#v, got: %#v%s\n", *mm_want_ptrs.user, mm_got.user, minimock.Diff(*mm_want_ptrs.user, mm_got.user))
+			if mm_want_ptrs.id != nil && !minimock.Equal(*mm_want_ptrs.id, mm_got.id) {
+				mmGet.t.Errorf("UserServiceMock.Get got unexpected parameter id, want: %#v, got: %#v%s\n", *mm_want_ptrs.id, mm_got.id, minimock.Diff(*mm_want_ptrs.id, mm_got.id))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
@@ -958,9 +958,9 @@ func (mmGet *UserServiceMock) Get(ctx context.Context, user *model.User) (up1 *d
 		return (*mm_results).up1, (*mm_results).err
 	}
 	if mmGet.funcGet != nil {
-		return mmGet.funcGet(ctx, user)
+		return mmGet.funcGet(ctx, id)
 	}
-	mmGet.t.Fatalf("Unexpected call to UserServiceMock.Get. %v %v", ctx, user)
+	mmGet.t.Fatalf("Unexpected call to UserServiceMock.Get. %v %v", ctx, id)
 	return
 }
 
