@@ -12,7 +12,6 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
 	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
 	serviceMocks "github.com/marinaaaniram/go-auth/internal/service/mocks"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
@@ -34,10 +33,6 @@ func TestApiUserDelete(t *testing.T) {
 		id = gofakeit.Int64()
 
 		serviceErr = fmt.Errorf("Service error")
-
-		serviceReq = &model.User{
-			ID: id,
-		}
 
 		req = &desc.DeleteRequest{
 			Id: id,
@@ -65,7 +60,7 @@ func TestApiUserDelete(t *testing.T) {
 			err:  nil,
 			userServiceMock: func(mc *minimock.Controller) service.UserService {
 				mock := serviceMocks.NewUserServiceMock(mc)
-				mock.DeleteMock.Expect(ctx, serviceReq).Return(nil)
+				mock.DeleteMock.Expect(ctx, id).Return(nil)
 				return mock
 			},
 		},
@@ -91,7 +86,7 @@ func TestApiUserDelete(t *testing.T) {
 			err:  serviceErr,
 			userServiceMock: func(mc *minimock.Controller) service.UserService {
 				mock := serviceMocks.NewUserServiceMock(mc)
-				mock.DeleteMock.Expect(ctx, serviceReq).Return(serviceErr)
+				mock.DeleteMock.Expect(ctx, id).Return(serviceErr)
 				return mock
 			},
 		},

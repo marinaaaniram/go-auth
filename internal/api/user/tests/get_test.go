@@ -11,7 +11,6 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
 	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
 	serviceMocks "github.com/marinaaaniram/go-auth/internal/service/mocks"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
@@ -36,10 +35,6 @@ func TestApiUserGet(t *testing.T) {
 		password = gofakeit.Password(true, true, true, true, true, 10)
 
 		serviceErr = fmt.Errorf("Service error")
-
-		serviceReq = &model.User{
-			ID: id,
-		}
 
 		serviceRes = &desc.User{
 			Id: id,
@@ -87,7 +82,7 @@ func TestApiUserGet(t *testing.T) {
 			err:  nil,
 			userServiceMock: func(mc *minimock.Controller) service.UserService {
 				mock := serviceMocks.NewUserServiceMock(mc)
-				mock.GetMock.Expect(ctx, serviceReq).Return(serviceRes, nil)
+				mock.GetMock.Expect(ctx, id).Return(serviceRes, nil)
 				return mock
 			},
 		},
@@ -113,7 +108,7 @@ func TestApiUserGet(t *testing.T) {
 			err:  serviceErr,
 			userServiceMock: func(mc *minimock.Controller) service.UserService {
 				mock := serviceMocks.NewUserServiceMock(mc)
-				mock.GetMock.Expect(ctx, serviceReq).Return(nil, serviceErr)
+				mock.GetMock.Expect(ctx, id).Return(nil, serviceErr)
 				return mock
 			},
 		},
