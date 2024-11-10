@@ -1,7 +1,8 @@
 package user
 
 import (
-	"github.com/marinaaaniram/go-auth/internal/client/db"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
+
 	"github.com/marinaaaniram/go-auth/internal/repository"
 )
 

@@ -6,6 +6,7 @@ LOCAL_MIGRATION_DIR=$(MIGRATION_DIR)
 LOCAL_MIGRATION_DSN=$(MIGRATION_DSN)
 
 init:
+	go clean -modcache
 	make install-deps
 	make get-deps
 	make generate
@@ -20,6 +21,7 @@ install-deps:
 get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
+	go get -u github.com/marinaaaniram/go-common-platform@latest
 	go mod tidy 
 
 generate:

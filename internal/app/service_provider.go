@@ -4,11 +4,12 @@ import (
 	"context"
 	"log"
 
+	"github.com/marinaaaniram/go-common-platform/pkg/closer"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
+	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
+	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
+
 	"github.com/marinaaaniram/go-auth/internal/api/user"
-	"github.com/marinaaaniram/go-auth/internal/client/db"
-	"github.com/marinaaaniram/go-auth/internal/client/db/pg"
-	"github.com/marinaaaniram/go-auth/internal/client/db/transaction"
-	"github.com/marinaaaniram/go-auth/internal/closer"
 	"github.com/marinaaaniram/go-auth/internal/config"
 	"github.com/marinaaaniram/go-auth/internal/repository"
 	userRepository "github.com/marinaaaniram/go-auth/internal/repository/user"

@@ -5,11 +5,11 @@ import (
 	"log"
 	"net"
 
+	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/marinaaaniram/go-auth/internal/closer"
 	"github.com/marinaaaniram/go-auth/internal/config"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
