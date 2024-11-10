@@ -12,7 +12,6 @@ import (
 
 	"github.com/gojuno/minimock/v3"
 	"github.com/marinaaaniram/go-auth/internal/model"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
 // UserServiceMock implements service.UserService
@@ -32,7 +31,7 @@ type UserServiceMock struct {
 	beforeDeleteCounter uint64
 	DeleteMock          mUserServiceMockDelete
 
-	funcGet          func(ctx context.Context, id int64) (up1 *desc.User, err error)
+	funcGet          func(ctx context.Context, id int64) (up1 *model.User, err error)
 	inspectFuncGet   func(ctx context.Context, id int64)
 	afterGetCounter  uint64
 	beforeGetCounter uint64
@@ -746,7 +745,7 @@ type UserServiceMockGetParamPtrs struct {
 
 // UserServiceMockGetResults contains results of the UserService.Get
 type UserServiceMockGetResults struct {
-	up1 *desc.User
+	up1 *model.User
 	err error
 }
 
@@ -840,7 +839,7 @@ func (mmGet *mUserServiceMockGet) Inspect(f func(ctx context.Context, id int64))
 }
 
 // Return sets up results that will be returned by UserService.Get
-func (mmGet *mUserServiceMockGet) Return(up1 *desc.User, err error) *UserServiceMock {
+func (mmGet *mUserServiceMockGet) Return(up1 *model.User, err error) *UserServiceMock {
 	if mmGet.mock.funcGet != nil {
 		mmGet.mock.t.Fatalf("UserServiceMock.Get mock is already set by Set")
 	}
@@ -853,7 +852,7 @@ func (mmGet *mUserServiceMockGet) Return(up1 *desc.User, err error) *UserService
 }
 
 // Set uses given function f to mock the UserService.Get method
-func (mmGet *mUserServiceMockGet) Set(f func(ctx context.Context, id int64) (up1 *desc.User, err error)) *UserServiceMock {
+func (mmGet *mUserServiceMockGet) Set(f func(ctx context.Context, id int64) (up1 *model.User, err error)) *UserServiceMock {
 	if mmGet.defaultExpectation != nil {
 		mmGet.mock.t.Fatalf("Default expectation is already set for the UserService.Get method")
 	}
@@ -882,7 +881,7 @@ func (mmGet *mUserServiceMockGet) When(ctx context.Context, id int64) *UserServi
 }
 
 // Then sets up UserService.Get return parameters for the expectation previously defined by the When method
-func (e *UserServiceMockGetExpectation) Then(up1 *desc.User, err error) *UserServiceMock {
+func (e *UserServiceMockGetExpectation) Then(up1 *model.User, err error) *UserServiceMock {
 	e.results = &UserServiceMockGetResults{up1, err}
 	return e.mock
 }
@@ -908,7 +907,7 @@ func (mmGet *mUserServiceMockGet) invocationsDone() bool {
 }
 
 // Get implements service.UserService
-func (mmGet *UserServiceMock) Get(ctx context.Context, id int64) (up1 *desc.User, err error) {
+func (mmGet *UserServiceMock) Get(ctx context.Context, id int64) (up1 *model.User, err error) {
 	mm_atomic.AddUint64(&mmGet.beforeGetCounter, 1)
 	defer mm_atomic.AddUint64(&mmGet.afterGetCounter, 1)
 

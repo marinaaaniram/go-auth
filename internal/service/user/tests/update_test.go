@@ -9,43 +9,45 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
 	"github.com/marinaaaniram/go-auth/internal/service/user"
 )
 
-func TestServiceUserGet(t *testing.T) {
+func TestServiceUserUpdate(t *testing.T) {
 	t.Parallel()
 	type userRepositoryMockFunc func(mc *minimock.Controller) repository.UserRepository
 
 	type args struct {
 		ctx context.Context
-		req int64
+		req *model.User
 	}
 
 	var (
 		ctx = context.Background()
 		mc  = minimock.NewController(t)
 
-		id        = gofakeit.Int64()
-		name      = gofakeit.Name()
-		email     = gofakeit.Email()
-		password  = gofakeit.Password(true, true, true, true, true, 10)
-		role      = model.AdminUserRole
-		createdAt = gofakeit.Date()
+		id   = gofakeit.Int64()
+		name = gofakeit.Name()
+		role = model.AdminUserRole
 
 		repoErr = fmt.Errorf("Repo error")
 
-		res = &model.User{
-			ID:        id,
-			Name:      name,
-			Email:     email,
-			Password:  password,
-			Role:      role,
-			CreatedAt: createdAt,
-			UpdatedAt: nil,
+		req = &model.User{
+			ID:   id,
+			Name: name,
+			Role: role,
+		}
+
+		req_2 = &model.User{
+			ID:   id,
+			Name: name,
+		}
+
+		req_3 = &model.User{
+			ID:   id,
+			Role: model.AdminUserRole,
 		}
 	)
 	defer t.Cleanup(mc.Finish)
@@ -58,30 +60,44 @@ func TestServiceUserGet(t *testing.T) {
 		userRepositoryMock userRepositoryMockFunc
 	}{
 		{
-			name: "Success case",
+			name: "Success case 1",
 			args: args{
 				ctx: ctx,
-				req: id,
+				req: req,
 			},
-			want: res,
+			want: nil,
 			err:  nil,
 			userRepositoryMock: func(mc *minimock.Controller) repository.UserRepository {
 				mock := repoMocks.NewUserRepositoryMock(mc)
-				mock.GetMock.Expect(ctx, id).Return(res, nil)
+				mock.UpdateMock.Expect(ctx, req).Return(nil)
 				return mock
 			},
 		},
 		{
-			name: "Repo nil pointer",
+			name: "Success case 2",
 			args: args{
 				ctx: ctx,
-				req: id,
+				req: req_2,
 			},
 			want: nil,
-			err:  errors.ErrPointerIsNil("userObj"),
+			err:  nil,
 			userRepositoryMock: func(mc *minimock.Controller) repository.UserRepository {
 				mock := repoMocks.NewUserRepositoryMock(mc)
-				mock.GetMock.Expect(ctx, id).Return(nil, nil)
+				mock.UpdateMock.Expect(ctx, req_2).Return(nil)
+				return mock
+			},
+		},
+		{
+			name: "Success case 3",
+			args: args{
+				ctx: ctx,
+				req: req_3,
+			},
+			want: nil,
+			err:  nil,
+			userRepositoryMock: func(mc *minimock.Controller) repository.UserRepository {
+				mock := repoMocks.NewUserRepositoryMock(mc)
+				mock.UpdateMock.Expect(ctx, req_3).Return(nil)
 				return mock
 			},
 		},
@@ -89,13 +105,13 @@ func TestServiceUserGet(t *testing.T) {
 			name: "Service error case",
 			args: args{
 				ctx: ctx,
-				req: id,
+				req: req,
 			},
 			want: nil,
 			err:  repoErr,
 			userRepositoryMock: func(mc *minimock.Controller) repository.UserRepository {
 				mock := repoMocks.NewUserRepositoryMock(mc)
-				mock.GetMock.Expect(ctx, id).Return(nil, repoErr)
+				mock.UpdateMock.Expect(ctx, req).Return(repoErr)
 				return mock
 			},
 		},
@@ -109,9 +125,8 @@ func TestServiceUserGet(t *testing.T) {
 			userRepoMock := tt.userRepositoryMock(mc)
 			service := user.NewUserService(userRepoMock)
 
-			userObj, err := service.Get(tt.args.ctx, tt.args.req)
+			err := service.Update(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)
-			require.Equal(t, tt.want, userObj)
 		})
 	}
 }

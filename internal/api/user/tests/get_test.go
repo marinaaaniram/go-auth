@@ -8,9 +8,11 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
 	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
 	serviceMocks "github.com/marinaaaniram/go-auth/internal/service/mocks"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
@@ -29,21 +31,22 @@ func TestApiUserGet(t *testing.T) {
 		ctx = context.Background()
 		mc  = minimock.NewController(t)
 
-		id       = gofakeit.Int64()
-		name     = gofakeit.Name()
-		email    = gofakeit.Email()
-		password = gofakeit.Password(true, true, true, true, true, 10)
+		id        = gofakeit.Int64()
+		name      = gofakeit.Name()
+		email     = gofakeit.Email()
+		password  = gofakeit.Password(true, true, true, true, true, 10)
+		createdAt = gofakeit.Date()
 
 		serviceErr = fmt.Errorf("Service error")
 
-		serviceRes = &desc.User{
-			Id: id,
-			UserInfo: &desc.UserInfo{
-				Name:     name,
-				Email:    email,
-				Password: password,
-				Role:     desc.RoleEnum_ADMIN,
-			},
+		serviceRes = &model.User{
+			ID:        id,
+			Name:      name,
+			Email:     email,
+			Password:  password,
+			Role:      model.AdminUserRole,
+			CreatedAt: createdAt,
+			UpdatedAt: nil,
 		}
 
 		req = &desc.GetRequest{
@@ -54,10 +57,11 @@ func TestApiUserGet(t *testing.T) {
 			User: &desc.User{
 				Id: id,
 				UserInfo: &desc.UserInfo{
-					Name:     name,
-					Email:    email,
-					Password: password,
-					Role:     desc.RoleEnum_ADMIN,
+					Name:      name,
+					Email:     email,
+					Role:      desc.RoleEnum_ADMIN,
+					CreatedAt: timestamppb.New(createdAt),
+					UpdatedAt: nil,
 				},
 			},
 		}
