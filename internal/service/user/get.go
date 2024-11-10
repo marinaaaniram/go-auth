@@ -5,17 +5,12 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/converter"
 	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
 // Get user_v1 in service layer
-func (s *serv) Get(ctx context.Context, user *model.User) (*desc.User, error) {
-	if user == nil {
-		return nil, errors.ErrPointerIsNil("user")
-	}
-
-	userObj, err := s.userRepository.Get(ctx, user)
+func (s *serv) Get(ctx context.Context, id int64) (*desc.User, error) {
+	userObj, err := s.userRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}

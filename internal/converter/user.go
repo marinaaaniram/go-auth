@@ -75,17 +75,6 @@ func FromDescCreateToUser(req *desc.CreateRequest) *model.User {
 	}
 }
 
-// Convert desc GetRequest fields to internal User model
-func FromDescGetToUser(req *desc.GetRequest) *model.User {
-	if req == nil {
-		return nil
-	}
-
-	return &model.User{
-		ID: req.GetId(),
-	}
-}
-
 // Convert desc UpdateRequest fields to internal User model
 func FromDescUpdateToUser(req *desc.UpdateRequest) *model.User {
 	if req == nil {
@@ -101,16 +90,5 @@ func FromDescUpdateToUser(req *desc.UpdateRequest) *model.User {
 		ID:   req.GetId(),
 		Name: name,
 		Role: roleDescToModel(req.GetRole()),
-	}
-}
-
-// Convert desc DeleteRequest fields to internal User model
-func FromDescDeleteToUser(req *desc.DeleteRequest) *model.User {
-	if req == nil {
-		return nil
-	}
-
-	return &model.User{
-		ID: req.GetId(),
 	}
 }

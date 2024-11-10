@@ -7,18 +7,13 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/client/db"
 	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Delete User in repository layer
-func (r *repo) Delete(ctx context.Context, user *model.User) error {
-	if user == nil {
-		return errors.ErrPointerIsNil("user")
-	}
-
+func (r *repo) Delete(ctx context.Context, id int64) error {
 	builder := sq.Delete(tableName).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{idColumn: user.ID})
+		Where(sq.Eq{idColumn: id})
 
 	query, args, err := builder.ToSql()
 	if err != nil {
