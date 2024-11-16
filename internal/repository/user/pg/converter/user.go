@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/marinaaaniram/go-auth/internal/model"
-	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/model"
+	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/pg/model"
 )
 
 // Convert sql.NullTime to *time.Time

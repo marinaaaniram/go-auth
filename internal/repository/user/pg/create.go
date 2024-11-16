@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	sq "github.com/Masterminds/squirrel"
+	"github.com/marinaaaniram/go-common-platform/pkg/db"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/marinaaaniram/go-auth/internal/client/db"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 )

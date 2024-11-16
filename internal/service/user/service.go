@@ -6,12 +6,14 @@ import (
 )
 
 type serv struct {
-	userRepository repository.UserRepository
+	userRepository   repository.UserRepository
+	userCacheService service.UserCacheService
 }
 
 // Create User service
-func NewUserService(userRepository repository.UserRepository) service.UserService {
+func NewUserService(userRepository repository.UserRepository, userCacheService service.UserCacheService) service.UserService {
 	return &serv{
-		userRepository: userRepository,
+		userRepository:   userRepository,
+		userCacheService: userCacheService,
 	}
 }

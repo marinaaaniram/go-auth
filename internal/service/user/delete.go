@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-// Delete user_v1 in service layer
+// Delete User in service layer
 func (s *serv) Delete(ctx context.Context, id int64) error {
 	err := s.userRepository.Delete(ctx, id)
 	if err != nil {
