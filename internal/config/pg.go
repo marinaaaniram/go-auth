@@ -17,6 +17,7 @@ type pgConfig struct {
 	dsn string
 }
 
+// Create postgres config
 func NewPGConfig() (PGConfig, error) {
 	dsn := os.Getenv(dsnEnvName)
 	if len(dsn) == 0 {
@@ -28,6 +29,7 @@ func NewPGConfig() (PGConfig, error) {
 	}, nil
 }
 
+// Get DNS string
 func (cfg *pgConfig) DSN() string {
 	return cfg.dsn
 }
