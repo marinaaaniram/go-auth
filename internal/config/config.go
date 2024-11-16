@@ -10,6 +10,10 @@ type GRPCConfig interface {
 	Address() string
 }
 
+type HTTPConfig interface {
+	Address() string
+}
+
 type PGConfig interface {
 	DSN() string
 }
@@ -19,6 +23,10 @@ type RedisConfig interface {
 	ConnectionTimeout() time.Duration
 	MaxIdle() int
 	IdleTimeout() time.Duration
+}
+
+type SwaggerConfig interface {
+	Address() string
 }
 
 type StorageConfig interface {
