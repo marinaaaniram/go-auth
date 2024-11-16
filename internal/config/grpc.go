@@ -21,6 +21,7 @@ type grpcConfig struct {
 	port string
 }
 
+// Create GRPS congig
 func NewGRPCConfig() (GRPCConfig, error) {
 	host := os.Getenv(grpcHostEnvName)
 	if len(host) == 0 {
@@ -38,6 +39,7 @@ func NewGRPCConfig() (GRPCConfig, error) {
 	}, nil
 }
 
+// Get Address
 func (cfg *grpcConfig) Address() string {
 	return net.JoinHostPort(cfg.host, cfg.port)
 }
