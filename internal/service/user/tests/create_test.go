@@ -21,6 +21,8 @@ func TestServiceUserCreate(t *testing.T) {
 	t.Parallel()
 	type userRepositoryMockFunc func(mc *minimock.Controller) repository.UserRepository
 	type userCacheServiceMockFunc func(mc *minimock.Controller) service.UserCacheService
+	type userConsumerServiceMockFunc func(mc *minimock.Controller) service.UserConsumerService
+	type userProducerServiceMockFunc func(mc *minimock.Controller) service.UserProducerService
 
 	type args struct {
 		ctx context.Context
@@ -49,12 +51,14 @@ func TestServiceUserCreate(t *testing.T) {
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name                 string
-		args                 args
-		want                 int64
-		err                  error
-		userRepositoryMock   userRepositoryMockFunc
-		userCacheServiceMock userCacheServiceMockFunc
+		name                    string
+		args                    args
+		want                    int64
+		err                     error
+		userRepositoryMock      userRepositoryMockFunc
+		userCacheServiceMock    userCacheServiceMockFunc
+		userConsumerServiceMock userConsumerServiceMockFunc
+		userProducerServiceMock userProducerServiceMockFunc
 	}{
 		{
 			name: "Success case",
@@ -72,6 +76,12 @@ func TestServiceUserCreate(t *testing.T) {
 			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
 				return nil
 			},
+			userConsumerServiceMock: func(mc *minimock.Controller) service.UserConsumerService {
+				return nil
+			},
+			userProducerServiceMock: func(mc *minimock.Controller) service.UserProducerService {
+				return nil
+			},
 		},
 		{
 			name: "Api nil pointer",
@@ -85,6 +95,12 @@ func TestServiceUserCreate(t *testing.T) {
 				return nil
 			},
 			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
+			userConsumerServiceMock: func(mc *minimock.Controller) service.UserConsumerService {
+				return nil
+			},
+			userProducerServiceMock: func(mc *minimock.Controller) service.UserProducerService {
 				return nil
 			},
 		},
@@ -104,6 +120,12 @@ func TestServiceUserCreate(t *testing.T) {
 			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
 				return nil
 			},
+			userConsumerServiceMock: func(mc *minimock.Controller) service.UserConsumerService {
+				return nil
+			},
+			userProducerServiceMock: func(mc *minimock.Controller) service.UserProducerService {
+				return nil
+			},
 		},
 	}
 
@@ -114,7 +136,9 @@ func TestServiceUserCreate(t *testing.T) {
 
 			userRepoMock := tt.userRepositoryMock(mc)
 			userCacheMock := tt.userCacheServiceMock(mc)
-			service := user.NewUserService(userRepoMock, userCacheMock)
+			userConsumerMock := tt.userConsumerServiceMock(mc)
+			userProducerMock := tt.userProducerServiceMock(mc)
+			service := user.NewUserService(userRepoMock, userCacheMock, userConsumerMock, userProducerMock)
 
 			newID, err := service.Create(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)

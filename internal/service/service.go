@@ -19,3 +19,13 @@ type UserCacheService interface {
 	Create(ctx context.Context, user *model.User) (int64, error)
 	Get(ctx context.Context, id int64) (*model.User, error)
 }
+
+// Describe User consumer service interface
+type UserConsumerService interface {
+	RunConsumer(ctx context.Context) error
+}
+
+// Describe User producer service interface
+type UserProducerService interface {
+	SendUser(ctx context.Context, user *model.User) error
+}

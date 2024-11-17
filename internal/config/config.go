@@ -3,6 +3,7 @@ package config
 import (
 	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/joho/godotenv"
 )
 
@@ -31,6 +32,19 @@ type SwaggerConfig interface {
 
 type StorageConfig interface {
 	Mode() string
+}
+
+type KafkaConsumerConfig interface {
+	Brokers() []string
+	GroupID() string
+	TopicName() string
+	Config() *sarama.Config
+}
+
+type KafkaProducerConfig interface {
+	Brokers() []string
+	TopicName() string
+	Config() *sarama.Config
 }
 
 func Load(path string) error {

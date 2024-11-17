@@ -42,7 +42,7 @@ func NewApp(ctx context.Context) (*App, error) {
 }
 
 // Run
-func (a *App) Run() error {
+func (a *App) Run(ctx context.Context) error {
 	defer func() {
 		closer.CloseAll()
 		closer.Wait()
@@ -56,7 +56,7 @@ func (a *App) Run() error {
 
 		err := a.runGRPCServer()
 		if err != nil {
-			log.Fatalf("failed to run GRPC server: %v", err)
+			log.Fatalf("Failed to run GRPC server: %v", err)
 		}
 	}()
 
@@ -65,7 +65,7 @@ func (a *App) Run() error {
 
 		err := a.runHTTPServer()
 		if err != nil {
-			log.Fatalf("failed to run HTTP server: %v", err)
+			log.Fatalf("Failed to run HTTP server: %v", err)
 		}
 	}()
 
@@ -74,7 +74,16 @@ func (a *App) Run() error {
 
 		err := a.runSwaggerServer()
 		if err != nil {
-			log.Fatalf("failed to run Swagger server: %v", err)
+			log.Fatalf("Failed to run Swagger server: %v", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
+		err := a.serviceProvider.GetUserConsumer(ctx).RunConsumer(ctx)
+		if err != nil {
+			log.Printf("Failed to run consumer: %s", err.Error())
 		}
 	}()
 
@@ -133,6 +142,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 	return nil
 }
 
+// Init HTTP server
 func (a *App) initHTTPServer(ctx context.Context) error {
 	mux := runtime.NewServeMux()
 
@@ -160,6 +170,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 	return nil
 }
 
+// Init Swagger server
 func (a *App) initSwaggerServer(_ context.Context) error {
 	statikFs, err := fs.New()
 	if err != nil {
@@ -195,6 +206,7 @@ func (a *App) runGRPCServer() error {
 	return nil
 }
 
+// Init Swagger server
 func (a *App) runHTTPServer() error {
 	log.Printf("HTTP server is running on %s", a.serviceProvider.HTTPConfig().Address())
 
@@ -206,6 +218,7 @@ func (a *App) runHTTPServer() error {
 	return nil
 }
 
+// Run swagger server
 func (a *App) runSwaggerServer() error {
 	log.Printf("Swagger server is running on %s", a.serviceProvider.SwaggerConfig().Address())
 
@@ -217,6 +230,7 @@ func (a *App) runSwaggerServer() error {
 	return nil
 }
 
+// serveSwaggerFile
 func serveSwaggerFile(path string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Serving swagger file: %s", path)

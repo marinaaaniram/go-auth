@@ -21,6 +21,8 @@ func TestServiceUserGet(t *testing.T) {
 	t.Parallel()
 	type userRepositoryMockFunc func(mc *minimock.Controller) repository.UserRepository
 	type userCacheServiceMockFunc func(mc *minimock.Controller) service.UserCacheService
+	type userConsumerServiceMockFunc func(mc *minimock.Controller) service.UserConsumerService
+	type userProducerServiceMockFunc func(mc *minimock.Controller) service.UserProducerService
 
 	type args struct {
 		ctx context.Context
@@ -53,12 +55,14 @@ func TestServiceUserGet(t *testing.T) {
 	defer t.Cleanup(mc.Finish)
 
 	tests := []struct {
-		name                 string
-		args                 args
-		want                 *model.User
-		err                  error
-		userRepositoryMock   userRepositoryMockFunc
-		userCacheServiceMock userCacheServiceMockFunc
+		name                    string
+		args                    args
+		want                    *model.User
+		err                     error
+		userRepositoryMock      userRepositoryMockFunc
+		userCacheServiceMock    userCacheServiceMockFunc
+		userConsumerServiceMock userConsumerServiceMockFunc
+		userProducerServiceMock userProducerServiceMockFunc
 	}{
 		{
 			name: "Success case",
@@ -74,6 +78,12 @@ func TestServiceUserGet(t *testing.T) {
 				return mock
 			},
 			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
+				return nil
+			},
+			userConsumerServiceMock: func(mc *minimock.Controller) service.UserConsumerService {
+				return nil
+			},
+			userProducerServiceMock: func(mc *minimock.Controller) service.UserProducerService {
 				return nil
 			},
 		},
@@ -93,6 +103,12 @@ func TestServiceUserGet(t *testing.T) {
 			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
 				return nil
 			},
+			userConsumerServiceMock: func(mc *minimock.Controller) service.UserConsumerService {
+				return nil
+			},
+			userProducerServiceMock: func(mc *minimock.Controller) service.UserProducerService {
+				return nil
+			},
 		},
 		{
 			name: "Service error case",
@@ -110,6 +126,12 @@ func TestServiceUserGet(t *testing.T) {
 			userCacheServiceMock: func(mc *minimock.Controller) service.UserCacheService {
 				return nil
 			},
+			userConsumerServiceMock: func(mc *minimock.Controller) service.UserConsumerService {
+				return nil
+			},
+			userProducerServiceMock: func(mc *minimock.Controller) service.UserProducerService {
+				return nil
+			},
 		},
 	}
 
@@ -119,8 +141,10 @@ func TestServiceUserGet(t *testing.T) {
 			t.Parallel()
 
 			userRepoMock := tt.userRepositoryMock(mc)
-			userCacheServiceMock := tt.userCacheServiceMock(mc)
-			service := user.NewUserService(userRepoMock, userCacheServiceMock)
+			userCacheMock := tt.userCacheServiceMock(mc)
+			userConsumerMock := tt.userConsumerServiceMock(mc)
+			userProducerMock := tt.userProducerServiceMock(mc)
+			service := user.NewUserService(userRepoMock, userCacheMock, userConsumerMock, userProducerMock)
 
 			userObj, err := service.Get(tt.args.ctx, tt.args.req)
 			require.Equal(t, tt.err, err)

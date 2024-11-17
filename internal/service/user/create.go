@@ -13,6 +13,13 @@ func (s *serv) Create(ctx context.Context, user *model.User) (int64, error) {
 		return 0, errors.ErrPointerIsNil("user")
 	}
 
+	if s.userProducerService != nil {
+		err := s.userProducerService.SendUser(ctx, user)
+		if err != nil {
+			return 0, err
+		}
+	}
+
 	userId, err := s.userRepository.Create(ctx, user)
 	if err != nil {
 		return 0, err
