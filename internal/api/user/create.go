@@ -14,19 +14,7 @@ func (i *Implementation) Create(ctx context.Context, req *desc.CreateRequest) (*
 		return nil, errors.ErrPointerIsNil("req")
 	}
 
-	if err := validateName(req.Name); err != nil {
-		return nil, err
-	}
-
-	if err := validateEmail(req.Email); err != nil {
-		return nil, err
-	}
-
-	if err := validatePassword(req.Password, req.PasswordConfirm); err != nil {
-		return nil, err
-	}
-
-	if err := validateRole(req.Role); err != nil {
+	if err := validateUser(req); err != nil {
 		return nil, err
 	}
 
