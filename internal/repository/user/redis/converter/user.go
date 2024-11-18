@@ -3,6 +3,7 @@ package converter
 import (
 	"time"
 
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	modelRedis "github.com/marinaaaniram/go-auth/internal/repository/user/redis/model"
 )
@@ -19,7 +20,7 @@ func FromRedisToModel(user *modelRedis.User) *model.User {
 		Name:      user.Name,
 		Email:     user.Email,
 		Password:  user.Password,
-		Role:      model.UserRole(user.Role),
+		Role:      constant.UserRole(user.Role),
 		CreatedAt: time.Unix(0, user.CreatedAtNs),
 		UpdatedAt: &updatedAt,
 	}

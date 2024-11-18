@@ -12,6 +12,7 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
@@ -40,18 +41,18 @@ func TestApiUserUpdate(t *testing.T) {
 		serviceReq = &model.User{
 			ID:   id,
 			Name: name,
-			Role: model.AdminUserRole,
+			Role: constant.AdminUserRole,
 		}
 
 		serviceReq_2 = &model.User{
 			ID:   id,
 			Name: name,
-			Role: model.UnknowUserRole,
+			Role: constant.UnknowUserRole,
 		}
 
 		serviceReq_3 = &model.User{
 			ID:   id,
-			Role: model.AdminUserRole,
+			Role: constant.AdminUserRole,
 		}
 
 		req = &desc.UpdateRequest{

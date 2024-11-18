@@ -9,6 +9,7 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/repository"
@@ -37,7 +38,7 @@ func TestServiceUserCreate(t *testing.T) {
 		name     = gofakeit.Name()
 		email    = gofakeit.Email()
 		password = gofakeit.Password(true, true, true, true, true, 10)
-		role     = model.AdminUserRole
+		role     = constant.AdminUserRole
 
 		repoErr = fmt.Errorf("Repo error")
 

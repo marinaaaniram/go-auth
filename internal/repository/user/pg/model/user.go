@@ -3,8 +3,6 @@ package model
 import (
 	"database/sql"
 	"time"
-
-	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Repository User model
@@ -13,7 +11,7 @@ type User struct {
 	Name      string
 	Email     string
 	Password  string
-	Role      model.UserRole
+	Role      string
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 }
@@ -22,7 +20,7 @@ type User struct {
 type UserUpdate struct {
 	ID   int64
 	Name *string
-	Role *model.UserRole
+	Role *string
 }
 
 type UserRedis struct {

@@ -9,6 +9,7 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/repository"
 	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
@@ -34,7 +35,7 @@ func TestServiceUserUpdate(t *testing.T) {
 
 		id   = gofakeit.Int64()
 		name = gofakeit.Name()
-		role = model.AdminUserRole
+		role = constant.AdminUserRole
 
 		repoErr = fmt.Errorf("Repo error")
 
@@ -51,7 +52,7 @@ func TestServiceUserUpdate(t *testing.T) {
 
 		req_3 = &model.User{
 			ID:   id,
-			Role: model.AdminUserRole,
+			Role: constant.AdminUserRole,
 		}
 	)
 	defer t.Cleanup(mc.Finish)

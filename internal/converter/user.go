@@ -3,16 +3,17 @@ package converter
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
 // Convert model.UserRole format to desc.RoleEnum
-func roleModelToDesc(role model.UserRole) desc.RoleEnum {
+func roleModelToDesc(role constant.UserRole) desc.RoleEnum {
 	switch role {
-	case model.AdminUserRole:
+	case constant.AdminUserRole:
 		return desc.RoleEnum_ADMIN
-	case model.UserUserRole:
+	case constant.UserUserRole:
 		return desc.RoleEnum_USER
 	default:
 		return desc.RoleEnum_UNKNOWN
@@ -20,14 +21,14 @@ func roleModelToDesc(role model.UserRole) desc.RoleEnum {
 }
 
 // Convert desc.RoleEnum format to model.UserRole
-func roleDescToModel(role desc.RoleEnum) model.UserRole {
+func roleDescToModel(role desc.RoleEnum) constant.UserRole {
 	switch role {
 	case desc.RoleEnum_ADMIN:
-		return model.AdminUserRole
+		return constant.AdminUserRole
 	case desc.RoleEnum_USER:
-		return model.UserUserRole
+		return constant.UserUserRole
 	default:
-		return model.UnknowUserRole
+		return constant.UnknowUserRole
 	}
 }
 

@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	"github.com/marinaaaniram/go-auth/internal/constant"
 )
 
 // Internal User model
@@ -10,7 +12,7 @@ type User struct {
 	Name      string
 	Email     string
 	Password  string
-	Role      UserRole
+	Role      constant.UserRole
 	CreatedAt time.Time
 	UpdatedAt *time.Time
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/pg/model"
 )
@@ -29,7 +30,7 @@ func FromRepoToUserGet(user *modelRepo.User) *model.User {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		Role:      model.UserRole(user.Role),
+		Role:      constant.UserRole(user.Role),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: repoNullTimeToTime(user.UpdatedAt),
 	}
@@ -37,9 +38,10 @@ func FromRepoToUserGet(user *modelRepo.User) *model.User {
 
 // Convert update params of User model to internal model
 func FromUserToRepoUpdate(user *model.User) *modelRepo.UserUpdate {
+	userRoleStr := string(user.Role)
 	return &modelRepo.UserUpdate{
 		ID:   user.ID,
 		Name: &user.Name,
-		Role: &user.Role,
+		Role: &userRoleStr,
 	}
 }

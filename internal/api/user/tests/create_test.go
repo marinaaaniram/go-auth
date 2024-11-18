@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
@@ -34,7 +35,7 @@ func TestApiUserCreate(t *testing.T) {
 		name     = gofakeit.Name()
 		email    = gofakeit.Email()
 		password = gofakeit.Password(true, true, true, true, true, 10)
-		role     = model.AdminUserRole
+		role     = constant.AdminUserRole
 
 		serviceErr = fmt.Errorf("Service error")
 

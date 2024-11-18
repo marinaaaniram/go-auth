@@ -8,6 +8,7 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/brianvoe/gofakeit/v6"
 
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
@@ -32,7 +33,7 @@ func main() {
 		Name:     gofakeit.Name(),
 		Email:    gofakeit.Email(),
 		Password: gofakeit.Password(true, true, true, true, true, 10),
-		Role:     model.AdminUserRole,
+		Role:     constant.AdminUserRole,
 	}
 
 	data, err := json.Marshal(user)
