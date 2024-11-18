@@ -25,12 +25,6 @@ func NewProducer(
 
 // SendMessage kafka
 func (p *producer) SendMessage(ctx context.Context, data []byte) error {
-	defer func() {
-		if err := p.Close(); err != nil {
-			log.Fatalf("Failed to close producer: %v\n", err.Error())
-		}
-	}()
-
 	msg := &sarama.ProducerMessage{
 		Topic: p.topicName,
 		Value: sarama.StringEncoder(data),
