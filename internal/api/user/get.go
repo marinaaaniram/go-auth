@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-auth/internal/converter"
-	"github.com/marinaaaniram/go-auth/internal/errors"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+	"go-auth/internal/converter"
+	"go-auth/internal/errors"
+	desc "go-auth/pkg/user_v1"
 )
 
 // Get User in desc layer

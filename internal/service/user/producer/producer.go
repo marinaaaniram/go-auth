@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/marinaaaniram/go-auth/internal/model"
+	"go-auth/internal/model"
 )
 
 // Send User to producer

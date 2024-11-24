@@ -1,9 +1,9 @@
 package consumer
 
 import (
-	"github.com/marinaaaniram/go-auth/internal/client/kafka"
-	"github.com/marinaaaniram/go-auth/internal/repository"
-	def "github.com/marinaaaniram/go-auth/internal/service"
+	"go-auth/internal/client/kafka"
+	"go-auth/internal/repository"
+	def "go-auth/internal/service"
 )
 
 var _ def.UserConsumerService = (*service)(nil)

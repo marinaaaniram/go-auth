@@ -7,8 +7,8 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 
-	"github.com/marinaaaniram/go-auth/internal/client/cache"
-	"github.com/marinaaaniram/go-auth/internal/config"
+	"go-auth/internal/client/cache"
+	"go-auth/internal/config"
 )
 
 var _ cache.RedisClient = (*client)(nil)

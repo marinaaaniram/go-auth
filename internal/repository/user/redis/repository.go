@@ -6,11 +6,11 @@ import (
 
 	redigo "github.com/gomodule/redigo/redis"
 
-	"github.com/marinaaaniram/go-auth/internal/client/cache"
-	"github.com/marinaaaniram/go-auth/internal/model"
-	"github.com/marinaaaniram/go-auth/internal/repository"
-	"github.com/marinaaaniram/go-auth/internal/repository/user/redis/converter"
-	modelRedis "github.com/marinaaaniram/go-auth/internal/repository/user/redis/model"
+	"go-auth/internal/client/cache"
+	"go-auth/internal/model"
+	"go-auth/internal/repository"
+	"go-auth/internal/repository/user/redis/converter"
+	modelRedis "go-auth/internal/repository/user/redis/model"
 )
 
 type repo struct {

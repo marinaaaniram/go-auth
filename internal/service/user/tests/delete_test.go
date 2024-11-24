@@ -9,10 +9,10 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"github.com/marinaaaniram/go-auth/internal/repository"
-	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
-	"github.com/marinaaaniram/go-auth/internal/service"
-	"github.com/marinaaaniram/go-auth/internal/service/user"
+	"go-auth/internal/repository"
+	repoMocks "go-auth/internal/repository/mocks"
+	"go-auth/internal/service"
+	"go-auth/internal/service/user"
 )
 
 func TestServiceUserDelete(t *testing.T) {

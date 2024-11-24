@@ -7,10 +7,10 @@ import (
 	"github.com/jackc/pgx"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
-	converterRepo "github.com/marinaaaniram/go-auth/internal/repository/user/pg/converter"
-	modelRepo "github.com/marinaaaniram/go-auth/internal/repository/user/pg/model"
+	"go-auth/internal/errors"
+	"go-auth/internal/model"
+	converterRepo "go-auth/internal/repository/user/pg/converter"
+	modelRepo "go-auth/internal/repository/user/pg/model"
 )
 
 // Get User in repository layer

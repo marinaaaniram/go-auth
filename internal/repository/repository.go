@@ -3,8 +3,20 @@ package repository
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-auth/internal/model"
+	"go-auth/internal/model"
 )
+
+// Describe Auth pg repository interface
+type AuthRepository interface {
+	Login(ctx context.Context, auth *model.Auth) (string, error)
+	GetRefreshToken(ctx context.Context, refreshToken string) (string, error)
+	GetAccessToken(ctx context.Context, accessToken string) (string, error)
+}
+
+// Describe Access pg repository interface
+type AccessRepository interface {
+	Check(ctx context.Context, endpointAddress string) error
+}
 
 // Describe User pg repository interface
 type UserRepository interface {

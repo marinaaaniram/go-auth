@@ -6,7 +6,7 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"github.com/marinaaaniram/go-auth/internal/errors"
+	"go-auth/internal/errors"
 )
 
 // Delete User in repository layer

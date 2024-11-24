@@ -7,9 +7,9 @@ import (
 	sq "github.com/Masterminds/squirrel"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
-	"github.com/marinaaaniram/go-auth/internal/repository/user/pg/converter"
+	"go-auth/internal/errors"
+	"go-auth/internal/model"
+	"go-auth/internal/repository/user/pg/converter"
 )
 
 // Update User in repository layer

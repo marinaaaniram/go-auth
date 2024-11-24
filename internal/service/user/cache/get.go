@@ -3,7 +3,7 @@ package cache
 import (
 	"context"
 
-	"github.com/marinaaaniram/go-auth/internal/model"
+	"go-auth/internal/model"
 )
 
 // Get User in cache

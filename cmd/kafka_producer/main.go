@@ -8,8 +8,8 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/brianvoe/gofakeit/v6"
 
-	"github.com/marinaaaniram/go-auth/internal/constant"
-	"github.com/marinaaaniram/go-auth/internal/model"
+	"go-auth/internal/constant"
+	"go-auth/internal/model"
 )
 
 const (

@@ -3,8 +3,8 @@ package user
 import (
 	"regexp"
 
-	"github.com/marinaaaniram/go-auth/internal/errors"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+	"go-auth/internal/errors"
+	desc "go-auth/pkg/user_v1"
 )
 
 var emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)

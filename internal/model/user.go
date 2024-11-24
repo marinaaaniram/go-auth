@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/marinaaaniram/go-auth/internal/constant"
+	"go-auth/internal/constant"
 )
 
 // Internal User model
@@ -15,4 +15,9 @@ type User struct {
 	Role      constant.UserRole
 	CreatedAt time.Time
 	UpdatedAt *time.Time
+}
+
+type UserInfo struct {
+	Username string `json:"username"`
+	Role     string `json:"role"`
 }

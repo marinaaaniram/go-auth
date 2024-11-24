@@ -32,6 +32,8 @@ get-deps:
 generate:
 	mkdir -p pkg/swagger
 	make generate-user-api
+	make generate-auth-api
+	make generate-access-api
 	$(LOCAL_BIN)/statik -src=pkg/swagger/ -include='*.css,*.html,*.js,*.json,*.png'
 
 generate-user-api:
@@ -45,9 +47,25 @@ generate-user-api:
 	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
 	--openapiv2_out=allow_merge=true,merge_file_name=api:pkg/swagger \
 	--plugin=protoc-gen-openapiv2=bin/protoc-gen-openapiv2 \
-	--validate_out lang=go:pkg/user_v1 --validate_opt=paths=source_relative \
-	--plugin=protoc-gen-validate=bin/protoc-gen-validate \
 	api/user_v1/user.proto
+
+generate-auth-api:
+	mkdir -p pkg/auth_v1
+	protoc --proto_path api/auth_v1 \
+	--go_out=pkg/auth_v1 --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=pkg/auth_v1 --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	api/auth_v1/auth.proto
+
+generate-access-api:
+	mkdir -p pkg/access_v1
+	protoc --proto_path api/access_v1 \
+	--go_out=pkg/access_v1 --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=pkg/access_v1 --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	api/access_v1/access.proto
 
 local-migration-status:
 	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
@@ -64,11 +82,11 @@ generate-mocks:
 
 test:
 	go clean -testcache
-	go test ./... -covermode count -coverpkg=github.com/marinaaaniram/go-auth/internal/... -count 1
+	go test ./... -covermode count -coverpkg=go-auth/internal/... -count 1
 
 test-coverage:
 	go clean -testcache
-	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=github.com/marinaaaniram/go-auth/internal/... -count 1
+	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=go-auth/internal/... -count 1
 	grep -v 'mocks\|config' coverage.tmp.out  > coverage.out
 	rm coverage.tmp.out
 	go tool cover -html=coverage.out;

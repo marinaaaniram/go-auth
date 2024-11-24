@@ -16,10 +16,10 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/marinaaaniram/go-auth/internal/config"
-	"github.com/marinaaaniram/go-auth/internal/interceptor"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
-	_ "github.com/marinaaaniram/go-auth/statik"
+	"go-auth/internal/config"
+	"go-auth/internal/interceptor"
+	desc "go-auth/pkg/user_v1"
+	_ "go-auth/statik"
 )
 
 type App struct {

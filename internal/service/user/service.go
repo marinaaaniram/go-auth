@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/marinaaaniram/go-auth/internal/repository"
-	"github.com/marinaaaniram/go-auth/internal/service"
+	"go-auth/internal/repository"
+	"go-auth/internal/service"
 )
 
 type serv struct {

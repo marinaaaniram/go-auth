@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/marinaaaniram/go-auth/internal/api/user"
-	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/service"
-	serviceMocks "github.com/marinaaaniram/go-auth/internal/service/mocks"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+	"go-auth/internal/api/user"
+	"go-auth/internal/errors"
+	"go-auth/internal/service"
+	serviceMocks "go-auth/internal/service/mocks"
+	desc "go-auth/pkg/user_v1"
 )
 
 func TestApiUserDelete(t *testing.T) {

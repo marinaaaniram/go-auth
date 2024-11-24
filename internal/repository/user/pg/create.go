@@ -8,8 +8,8 @@ import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/marinaaaniram/go-auth/internal/errors"
-	"github.com/marinaaaniram/go-auth/internal/model"
+	"go-auth/internal/errors"
+	"go-auth/internal/model"
 )
 
 func hashPassword(password string) (string, error) {
