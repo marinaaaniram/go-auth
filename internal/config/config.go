@@ -3,10 +3,15 @@ package config
 import (
 	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/joho/godotenv"
 )
 
 type GRPCConfig interface {
+	Address() string
+}
+
+type HTTPConfig interface {
 	Address() string
 }
 
@@ -21,8 +26,25 @@ type RedisConfig interface {
 	IdleTimeout() time.Duration
 }
 
+type SwaggerConfig interface {
+	Address() string
+}
+
 type StorageConfig interface {
 	Mode() string
+}
+
+type KafkaConsumerConfig interface {
+	Brokers() []string
+	GroupID() string
+	TopicName() string
+	Config() *sarama.Config
+}
+
+type KafkaProducerConfig interface {
+	Brokers() []string
+	TopicName() string
+	Config() *sarama.Config
 }
 
 func Load(path string) error {

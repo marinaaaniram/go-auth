@@ -15,33 +15,33 @@ var (
 )
 
 func ErrCanNotBeEmpty(argumentName string) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("%s cannot be empty", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("%s cannot be empty", argumentName))
 }
 
 func ErrPointerIsNil(argumentName string) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("%s is nil", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("%s is nil", argumentName))
 }
 
 func ErrFailedToBuildQuery(argumentName error) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("Failed to build query: %v", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to build query: %v", argumentName))
 }
 
 func ErrFailedToSelectQuery(argumentName error) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("Failed to select query: %v", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to select query: %v", argumentName))
 }
 
 func ErrFailedToInsertQuery(argumentName error) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("Failed to insert query: %v", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to insert query: %v", argumentName))
 }
 
 func ErrFailedToUpdateQuery(argumentName error) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("Failed to update query: %v", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to update query: %v", argumentName))
 }
 
 func ErrFailedToDeleteQuery(argumentName error) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("Failed to delete query: %v", argumentName))
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to delete query: %v", argumentName))
 }
 
 func ErrObjectNotFount(objectName string, objectId int64) error {
-	return status.Errorf(codes.Internal, fmt.Sprintf("%s with id %d not found", objectName, objectId))
+	return status.Errorf(codes.NotFound, fmt.Sprintf("%s with id %d not found", objectName, objectId))
 }

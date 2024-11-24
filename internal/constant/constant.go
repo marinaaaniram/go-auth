@@ -1,4 +1,4 @@
-package model
+package constant
 
 type UserRole string
 

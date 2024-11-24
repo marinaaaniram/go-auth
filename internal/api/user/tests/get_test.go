@@ -11,6 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/marinaaaniram/go-auth/internal/api/user"
+	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
@@ -44,7 +45,7 @@ func TestApiUserGet(t *testing.T) {
 			Name:      name,
 			Email:     email,
 			Password:  password,
-			Role:      model.AdminUserRole,
+			Role:      constant.AdminUserRole,
 			CreatedAt: createdAt,
 			UpdatedAt: nil,
 		}
