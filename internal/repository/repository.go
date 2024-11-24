@@ -10,7 +10,7 @@ import (
 type AuthRepository interface {
 	Login(ctx context.Context, auth *model.Auth) (string, error)
 	GetRefreshToken(ctx context.Context, refreshToken string) (string, error)
-	GetAccessToken(ctx context.Context, accessToken string) (string, error)
+	GetAccessToken(ctx context.Context, refreshToken string) (string, error)
 }
 
 // Describe Access pg repository interface
