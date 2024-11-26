@@ -36,7 +36,7 @@ func (s *serv) Check(ctx context.Context, endpointAddress string) error {
 
 	accessibleRoles, err := s.getAccessibleRoles(ctx, endpointAddress)
 	if err != nil {
-		return errors.ErrGetAccessibleRole
+		return errors.ErrGetAccessibleRole(err)
 	}
 
 	for _, i := range accessibleRoles {

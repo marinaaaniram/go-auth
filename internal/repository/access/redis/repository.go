@@ -2,11 +2,10 @@ package redis
 
 import (
 	"context"
-	"fmt"
-
-	redigo "github.com/gomodule/redigo/redis"
+	"encoding/json"
 
 	"go-auth/internal/client/cache"
+	"go-auth/internal/errors"
 	"go-auth/internal/repository"
 )
 
@@ -21,11 +20,15 @@ func NewAccessRedisRepository(cl cache.RedisClient) repository.AccessRedisReposi
 
 // Create Access in redis
 func (r *repo) Create(ctx context.Context, accessibleRoles []string, endpointAddress string) error {
-	fmt.Printf("33333333\n")
-
-	err := r.cl.HashSet(ctx, endpointAddress, accessibleRoles)
+	jsonData, err := json.Marshal(accessibleRoles)
 	if err != nil {
-		return err
+		return errors.ErrFailedWithAccessCache(err)
+	}
+
+	// Сохраняем JSON в Redis
+	err = r.cl.Set(ctx, endpointAddress, string(jsonData))
+	if err != nil {
+		return errors.ErrFailedWithAccessCache(err)
 	}
 
 	return nil
@@ -33,19 +36,29 @@ func (r *repo) Create(ctx context.Context, accessibleRoles []string, endpointAdd
 
 // Create Access from redis
 func (r *repo) Get(ctx context.Context, endpointAddress string) ([]string, error) {
-	values, err := r.cl.HGetAll(ctx, endpointAddress)
+	jsonData, err := r.cl.Get(ctx, endpointAddress)
 	if err != nil {
-		return nil, err
+		return nil, errors.ErrFailedWithAccessCache(err)
 	}
 
-	if len(values) == 0 {
-		return nil, nil
+	if jsonData == nil {
+		return nil, errors.ErrFailedWithAccessCache(err)
+	}
+
+	var rawString string
+	switch v := jsonData.(type) {
+	case string:
+		rawString = v
+	case []byte:
+		rawString = string(v)
+	default:
+		return nil, errors.ErrFailedWithAccessCache(err)
 	}
 
 	var accessibleRoles []string
-	err = redigo.ScanStruct(values, &accessibleRoles)
+	err = json.Unmarshal([]byte(rawString), &accessibleRoles)
 	if err != nil {
-		return nil, err
+		return nil, errors.ErrFailedWithAccessCache(err)
 	}
 
 	return accessibleRoles, nil

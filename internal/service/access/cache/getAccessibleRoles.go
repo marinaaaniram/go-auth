@@ -2,15 +2,10 @@ package cache
 
 import (
 	"context"
-	"fmt"
 )
 
 // Create AccessibleRoles in cache
 func (s *serv) Create(ctx context.Context, accessibleRoles []string, endpointAddress string) (string, error) {
-
-	fmt.Printf("!!!!! %v\n", endpointAddress)
-	fmt.Printf("!!!!! %v\n", s.txManager)
-
 	err := s.txManager.ReadCommitted(ctx, func(ctx context.Context) error {
 		var errTx error
 		errTx = s.accessRedisRepository.Create(ctx, accessibleRoles, endpointAddress)

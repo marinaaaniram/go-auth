@@ -15,5 +15,5 @@ const (
 	AccessTokenSecretKey  = "VqvguGiffXILza1f44TWXowDT4zwf03dtXmqWW4SYyE="
 
 	RefreshTokenExpiration = 60 * time.Minute
-	AccessTokenExpiration  = 5 * time.Minute
+	AccessTokenExpiration  = 60 * time.Minute // TODO for development only
 )

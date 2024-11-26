@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 
 	"go-auth/internal/constant"
 	"go-auth/internal/errors"
@@ -21,9 +20,6 @@ func (s *serv) Login(ctx context.Context, auth *model.Auth) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	fmt.Printf("user.Password: %s\n", user.Password)
-	fmt.Printf("auth.Password: %s\n", auth.Password)
 
 	if !utils.VerifyPassword(user.Password, auth.Password) {
 		return "", errors.ErrIncorrectPassword

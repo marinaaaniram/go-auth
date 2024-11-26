@@ -272,7 +272,7 @@ func (s *serviceProvider) GetAccessRedisRepository(ctx context.Context) reposito
 // Init User cache service
 func (s *serviceProvider) GetUserCacheService(ctx context.Context) service.UserCacheService {
 	if s.userCacheService == nil {
-		s.userCacheService = userCacheService.NewUserCacheService(s.GetUserRedisRepository(ctx), s.txManager)
+		s.userCacheService = userCacheService.NewUserCacheService(s.GetUserRedisRepository(ctx), s.TxManager(ctx))
 	}
 
 	return s.userCacheService
@@ -281,7 +281,7 @@ func (s *serviceProvider) GetUserCacheService(ctx context.Context) service.UserC
 // Init Access cache service
 func (s *serviceProvider) GetAccessCacheService(ctx context.Context) service.AccessCacheService {
 	if s.accessCacheService == nil {
-		s.accessCacheService = accessCacheService.NewAccessCacheService(s.GetAccessRedisRepository(ctx), s.txManager)
+		s.accessCacheService = accessCacheService.NewAccessCacheService(s.GetAccessRedisRepository(ctx), s.TxManager(ctx))
 	}
 
 	return s.accessCacheService

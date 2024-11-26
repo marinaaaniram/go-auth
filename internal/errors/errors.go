@@ -17,7 +17,6 @@ var (
 	ErrInvalidRefreshToken     = status.Errorf(codes.Aborted, "Invalid refresh token")
 	ErrInvalidAccessToken      = status.Errorf(codes.Aborted, "Invalid access token")
 	ErrAccessDenied            = status.Errorf(codes.Aborted, "Access denied")
-	ErrGetAccessibleRole       = status.Errorf(codes.Aborted, "Failed to get accessible roles")
 	ErrInvalidAuthHeaderFormat = status.Errorf(codes.Aborted, "Invalid authorization header format")
 	ErrAuthHeaderNotProvided   = status.Errorf(codes.Aborted, "Authorization header is not provided")
 	ErrMetedataNotProvided     = status.Errorf(codes.Aborted, "Metadata is not provided")
@@ -61,4 +60,12 @@ func ErrObjectNotFount(objectName string, objectId int64) error {
 
 func ErrObjectContentNotFount(objectName string, objectContent string) error {
 	return status.Errorf(codes.NotFound, fmt.Sprintf("%s with email %s not found", objectName, objectContent))
+}
+
+func ErrGetAccessibleRole(argumentName error) error {
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to get accessible roles: %v", argumentName))
+}
+
+func ErrFailedWithAccessCache(argumentName error) error {
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed with access cache: %v", argumentName))
 }

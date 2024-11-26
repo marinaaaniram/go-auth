@@ -8,7 +8,7 @@ import (
 func (s *serv) getAccessibleRoles(ctx context.Context, endpointAddress string) ([]string, error) {
 	if s.accessCacheService != nil {
 		accessibleRoles, err := s.accessCacheService.Get(ctx, endpointAddress)
-		if err == nil && accessibleRoles != nil {
+		if err == nil && len(accessibleRoles) > 0 {
 			return accessibleRoles, nil
 		}
 	}
