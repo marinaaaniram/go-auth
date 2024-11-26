@@ -6,19 +6,11 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
-	"golang.org/x/crypto/bcrypt"
 
 	"go-auth/internal/errors"
 	"go-auth/internal/model"
+	"go-auth/internal/utils"
 )
-
-func hashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hashedPassword), nil
-}
 
 // Create User in repository layer
 func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
@@ -26,7 +18,7 @@ func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
 		return 0, errors.ErrPointerIsNil("user")
 	}
 
-	hashedPassword, err := hashPassword(user.Password)
+	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
 		return 0, errors.ErrFailedToHashPassword
 	}
@@ -34,7 +26,7 @@ func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
 	builder := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(nameColumn, emailColumn, passwordColumn, roleColumn).
-		Values(user.Name, hashedPassword, user.Email, user.Role).
+		Values(user.Name, user.Email, hashedPassword, user.Role).
 		Suffix(fmt.Sprintf("RETURNING %s", idColumn))
 
 	query, args, err := builder.ToSql()

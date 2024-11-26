@@ -1,4 +1,4 @@
-package user
+package access
 
 import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
@@ -6,11 +6,21 @@ import (
 	"go-auth/internal/repository"
 )
 
+const (
+	tableName = "access_endpoint"
+
+	idColumn        = "id"
+	endpointColumn  = "endpoint"
+	roleColumn      = "role"
+	createdAtColumn = "created_at"
+	updatedAtColumn = "updated_at"
+)
+
 type repo struct {
 	db db.Client
 }
 
-// Create Access repository
+// Create User repository
 func NewAccessRepository(db db.Client) repository.AccessRepository {
 	return &repo{db: db}
 }

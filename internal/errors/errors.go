@@ -10,6 +10,7 @@ import (
 var (
 	ErrPasswordsDoNotMatch     = status.Errorf(codes.InvalidArgument, "'password' and 'password_confirm' do not match")
 	ErrFailedToHashPassword    = status.Errorf(codes.InvalidArgument, "Failed to hash password")
+	ErrIncorrectPassword       = status.Errorf(codes.InvalidArgument, "Incorrect password")
 	ErrEmailIsNotValid         = status.Errorf(codes.InvalidArgument, "Email format is invalid")
 	ErrRoleIsNotValid          = status.Errorf(codes.InvalidArgument, "Role format is invalid")
 	ErrGenerateToken           = status.Errorf(codes.Aborted, "Failed to generate token")
@@ -38,6 +39,10 @@ func ErrFailedToSelectQuery(argumentName error) error {
 	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to select query: %v", argumentName))
 }
 
+func ErrFailedToScanRow(argumentName error) error {
+	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to scan row: %v", argumentName))
+}
+
 func ErrFailedToInsertQuery(argumentName error) error {
 	return status.Errorf(codes.InvalidArgument, fmt.Sprintf("Failed to insert query: %v", argumentName))
 }
@@ -52,4 +57,8 @@ func ErrFailedToDeleteQuery(argumentName error) error {
 
 func ErrObjectNotFount(objectName string, objectId int64) error {
 	return status.Errorf(codes.NotFound, fmt.Sprintf("%s with id %d not found", objectName, objectId))
+}
+
+func ErrObjectContentNotFount(objectName string, objectContent string) error {
+	return status.Errorf(codes.NotFound, fmt.Sprintf("%s with email %s not found", objectName, objectContent))
 }

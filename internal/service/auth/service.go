@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"go-auth/internal/repository"
@@ -6,14 +6,14 @@ import (
 )
 
 type serv struct {
-	authRepository repository.AuthRepository
+	userRepository repository.UserRepository
 }
 
 // Create Auth service
 func NewAuthService(
-	authRepository repository.AuthRepository,
+	userRepository repository.UserRepository,
 ) service.AuthService {
 	return &serv{
-		authRepository: authRepository,
+		userRepository: userRepository,
 	}
 }

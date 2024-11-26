@@ -1,4 +1,4 @@
-package user
+package access
 
 import (
 	"go-auth/internal/service"

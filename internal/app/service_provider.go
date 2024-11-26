@@ -11,6 +11,8 @@ import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db/pg"
 	"github.com/marinaaaniram/go-common-platform/pkg/db/transaction"
 
+	"go-auth/internal/api/access"
+	"go-auth/internal/api/auth"
 	"go-auth/internal/api/user"
 	"go-auth/internal/client/cache"
 	"go-auth/internal/client/cache/redis"
@@ -20,9 +22,14 @@ import (
 	"go-auth/internal/config"
 	"go-auth/internal/config/env"
 	"go-auth/internal/repository"
+	accessRepository "go-auth/internal/repository/access/pg"
+	accessRedisRepository "go-auth/internal/repository/access/redis"
 	userRepository "go-auth/internal/repository/user/pg"
 	userRedisRepository "go-auth/internal/repository/user/redis"
 	"go-auth/internal/service"
+
+	accessService "go-auth/internal/service/access"
+	authService "go-auth/internal/service/auth"
 	userConsumerService "go-auth/internal/service/consumer"
 	userService "go-auth/internal/service/user"
 	userCacheService "go-auth/internal/service/user/cache"
@@ -44,13 +51,18 @@ type serviceProvider struct {
 	redisPool   *redigo.Pool
 	redisClient cache.RedisClient
 
-	userRepository      repository.UserRepository
-	userRedisRepository repository.UserRedisRepository
+	userRepository        repository.UserRepository
+	userRedisRepository   repository.UserRedisRepository
+	accessRepository      repository.AccessRepository
+	accessRedisRepository repository.AccessRedisRepository
 
 	userService         service.UserService
 	userCacheService    service.UserCacheService
 	userConsumerService service.UserConsumerService
 	userProducerService service.UserProducerService
+
+	authService   service.AuthService
+	accessService service.AccessService
 
 	consumer             kafka.Consumer
 	consumerGroup        sarama.ConsumerGroup
@@ -59,7 +71,9 @@ type serviceProvider struct {
 	producer     kafka.Producer
 	producerSync sarama.SyncProducer
 
-	userImpl *user.Implementation
+	userImpl   *user.Implementation
+	authImpl   *auth.Implementation
+	accessImpl *access.Implementation
 }
 
 func newServiceProvider() *serviceProvider {
@@ -108,6 +122,7 @@ func (s *serviceProvider) RedisConfig() config.RedisConfig {
 	return s.redisConfig
 }
 
+// Get http config
 func (s *serviceProvider) HTTPConfig() config.HTTPConfig {
 	if s.httpConfig == nil {
 		cfg, err := env.NewHTTPConfig()
@@ -121,6 +136,7 @@ func (s *serviceProvider) HTTPConfig() config.HTTPConfig {
 	return s.httpConfig
 }
 
+// Get swagger config
 func (s *serviceProvider) SwaggerConfig() config.SwaggerConfig {
 	if s.swaggerConfig == nil {
 		cfg, err := env.NewSwaggerConfig()
@@ -134,6 +150,7 @@ func (s *serviceProvider) SwaggerConfig() config.SwaggerConfig {
 	return s.swaggerConfig
 }
 
+// Get consumer config
 func (s *serviceProvider) KafkaConsumerConfig() config.KafkaConsumerConfig {
 	if s.kafkaConsumerConfig == nil {
 		cfg, err := env.NewKafkaConsumerConfig()
@@ -147,6 +164,7 @@ func (s *serviceProvider) KafkaConsumerConfig() config.KafkaConsumerConfig {
 	return s.kafkaConsumerConfig
 }
 
+// Get producer config
 func (s *serviceProvider) KafkaProducerConfig() config.KafkaProducerConfig {
 	if s.kafkaProducerConfig == nil {
 		cfg, err := env.NewKafkaProducerConfig()
@@ -222,13 +240,31 @@ func (s *serviceProvider) GetUserRepository(ctx context.Context) repository.User
 	return s.userRepository
 }
 
-// Init User repository
+// Init Access repository
+func (s *serviceProvider) GetAccessRepository(ctx context.Context) repository.AccessRepository {
+	if s.accessRepository == nil {
+		s.accessRepository = accessRepository.NewAccessRepository(s.DBClient(ctx))
+	}
+
+	return s.accessRepository
+}
+
+// Init User redis repository
 func (s *serviceProvider) GetUserRedisRepository(ctx context.Context) repository.UserRedisRepository {
 	if s.userRedisRepository == nil {
-		s.userRedisRepository = userRedisRepository.NewRedisRepository(s.RedisClient(ctx))
+		s.userRedisRepository = userRedisRepository.NewUserRedisRepository(s.RedisClient(ctx))
 	}
 
 	return s.userRedisRepository
+}
+
+// Init Access redis repository
+func (s *serviceProvider) GetAccessRedisRepository(ctx context.Context) repository.AccessRedisRepository {
+	if s.accessRedisRepository == nil {
+		s.accessRedisRepository = accessRedisRepository.NewAccessRedisRepository(s.RedisClient(ctx))
+	}
+
+	return s.accessRedisRepository
 }
 
 // Init User cache service
@@ -252,7 +288,7 @@ func (s *serviceProvider) GetUserProducer(ctx context.Context) service.UserProdu
 	return s.userProducerService
 }
 
-// Init User producer service
+// Init User consumer service
 func (s *serviceProvider) GetUserConsumer(ctx context.Context) service.UserConsumerService {
 	if s.userConsumerService == nil {
 		s.userConsumerService = userConsumerService.NewUserConsumerService(
@@ -278,6 +314,30 @@ func (s *serviceProvider) GetUserService(ctx context.Context) service.UserServic
 	return s.userService
 }
 
+// Init Auth service
+func (s *serviceProvider) GetAuthService(ctx context.Context) service.AuthService {
+	if s.authService == nil {
+		s.authService = authService.NewAuthService(
+			s.GetUserRepository(ctx),
+		)
+	}
+
+	return s.authService
+}
+
+// Init Access service
+func (s *serviceProvider) GetAccessService(ctx context.Context) service.AccessService {
+	if s.accessService == nil {
+		s.accessService = accessService.NewAccessService(
+			s.GetUserRepository(ctx),
+			s.GetAccessRepository(ctx),
+			s.GetAccessRedisRepository(ctx),
+		)
+	}
+
+	return s.accessService
+}
+
 // Init User implementaion
 func (s *serviceProvider) GetUserImpl(ctx context.Context) *user.Implementation {
 	if s.userImpl == nil {
@@ -285,6 +345,24 @@ func (s *serviceProvider) GetUserImpl(ctx context.Context) *user.Implementation 
 	}
 
 	return s.userImpl
+}
+
+// Init Auth implementaion
+func (s *serviceProvider) GetAuthImpl(ctx context.Context) *auth.Implementation {
+	if s.authImpl == nil {
+		s.authImpl = auth.NewAuthImplementation(s.GetAuthService(ctx))
+	}
+
+	return s.authImpl
+}
+
+// Init Access implementaion
+func (s *serviceProvider) GetAccessImpl(ctx context.Context) *access.Implementation {
+	if s.accessImpl == nil {
+		s.accessImpl = access.NewAccessImplementation(s.GetAccessService(ctx))
+	}
+
+	return s.accessImpl
 }
 
 // Init Producer

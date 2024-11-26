@@ -9,13 +9,13 @@ import (
 	"go-auth/internal/model"
 )
 
-func GenerateToken(info model.UserInfo, secretKey []byte, duration time.Duration) (string, error) {
+func GenerateToken(info model.UserAuthInfo, secretKey []byte, duration time.Duration) (string, error) {
 	claims := model.UserClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(duration).Unix(),
 		},
-		Username: info.Username,
-		Role:     info.Role,
+		Email: info.Email,
+		Role:  string(info.Role),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

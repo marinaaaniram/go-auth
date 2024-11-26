@@ -17,7 +17,7 @@ type User struct {
 	UpdatedAt *time.Time
 }
 
-type UserInfo struct {
-	Username string `json:"username"`
-	Role     string `json:"role"`
+type UserAuthInfo struct {
+	Email string            `json:"email"`
+	Role  constant.UserRole `json:"role"`
 }

@@ -18,7 +18,9 @@ import (
 
 	"go-auth/internal/config"
 	"go-auth/internal/interceptor"
-	desc "go-auth/pkg/user_v1"
+	accessDesc "go-auth/pkg/access_v1"
+	authDesc "go-auth/pkg/auth_v1"
+	userDesc "go-auth/pkg/user_v1"
 	_ "go-auth/statik"
 )
 
@@ -137,7 +139,9 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 	reflection.Register(a.grpcServer)
 
-	desc.RegisterUserV1Server(a.grpcServer, a.serviceProvider.GetUserImpl(ctx))
+	userDesc.RegisterUserV1Server(a.grpcServer, a.serviceProvider.GetUserImpl(ctx))
+	authDesc.RegisterAuthV1Server(a.grpcServer, a.serviceProvider.GetAuthImpl(ctx))
+	accessDesc.RegisterAccessV1Server(a.grpcServer, a.serviceProvider.GetAccessImpl(ctx))
 
 	return nil
 }
@@ -150,7 +154,7 @@ func (a *App) initHTTPServer(ctx context.Context) error {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	err := desc.RegisterUserV1HandlerFromEndpoint(ctx, mux, a.serviceProvider.GRPCConfig().Address(), opts)
+	err := userDesc.RegisterUserV1HandlerFromEndpoint(ctx, mux, a.serviceProvider.GRPCConfig().Address(), opts)
 	if err != nil {
 		return err
 	}

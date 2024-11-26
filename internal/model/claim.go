@@ -8,6 +8,6 @@ const (
 
 type UserClaims struct {
 	jwt.StandardClaims
-	Username string `json:"username"`
-	Role     string `json:"role"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 }

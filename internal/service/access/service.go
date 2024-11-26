@@ -1,4 +1,4 @@
-package user
+package access
 
 import (
 	"go-auth/internal/repository"
@@ -6,14 +6,20 @@ import (
 )
 
 type serv struct {
-	accessRepository repository.AccessRepository
+	userRepository        repository.UserRepository
+	accessRepository      repository.AccessRepository
+	accessRedisRepository repository.AccessRedisRepository
 }
 
 // Create Access service
 func NewAccessService(
+	userRepository repository.UserRepository,
 	accessRepository repository.AccessRepository,
+	accessRedisRepository repository.AccessRedisRepository,
 ) service.AccessService {
 	return &serv{
-		accessRepository: accessRepository,
+		userRepository:        userRepository,
+		accessRepository:      accessRepository,
+		accessRedisRepository: accessRedisRepository,
 	}
 }

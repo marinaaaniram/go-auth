@@ -1,33 +1,36 @@
-package user
+package auth
 
 import (
 	"context"
-	"go-auth/internal/errors"
+	"go-auth/internal/constant"
 	"go-auth/internal/model"
 	"go-auth/internal/utils"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // GetAccessToken Auth in service layer
 func (s *serv) GetAccessToken(ctx context.Context, refreshToken string) (string, error) {
-	accessToken, err := s.authRepository.GetAccessToken(ctx, refreshToken)
+	claims, err := utils.VerifyToken(refreshToken, []byte(constant.RefreshTokenSecretKey))
+	if err != nil {
+		return "", status.Errorf(codes.Aborted, "Invalid refresh token")
+	}
+
+	var user *model.User
+	user, err = s.userRepository.GetAuthInfo(ctx, &model.Auth{
+		Email: claims.Email,
+	})
 	if err != nil {
 		return "", err
 	}
 
-	claims, err := utils.VerifyToken(refreshToken, []byte(refreshTokenSecretKey))
-	if err != nil {
-		return "", errors.ErrInvalidRefreshToken
-	}
-
-	// Можем слазать в базу или в кэш за доп данными пользователя
-
-	accessToken, err = utils.GenerateToken(model.UserInfo{
-		Username: claims.Username,
-		// Это пример, в реальности роль должна браться из базы или кэша
-		Role: "admin",
+	accessToken, err := utils.GenerateToken(model.UserAuthInfo{
+		Email: user.Email,
+		Role:  user.Role,
 	},
-		[]byte(accessTokenSecretKey),
-		accessTokenExpiration,
+		[]byte(constant.AccessTokenSecretKey),
+		constant.AccessTokenExpiration,
 	)
 	if err != nil {
 		return "", err

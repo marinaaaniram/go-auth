@@ -18,7 +18,7 @@ type repo struct {
 }
 
 // Create Redis repository
-func NewUserRedisRepository(cl cache.RedisClient) repository.UserRedisRepository {
+func NewAccessRedisRepository(cl cache.RedisClient) repository.UserRedisRepository {
 	return &repo{cl: cl}
 }
 
