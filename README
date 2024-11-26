@@ -1,49 +1,56 @@
-# Название проекта
+**Сервис авторизации пользователей**
 
-Сервис авторизации пользователей
-
+---
 
 ## Установка
 
-1. Создать .env файл с необходиными переменными:
+1. Создайте `.env` файл с необходимыми переменными:
 
-PG_DATABASE_NAME=
-PG_USER=
-PG_PASSWORD=
-PG_PORT=
+    ```env
+    PG_DATABASE_NAME=
+    PG_USER=
+    PG_PASSWORD=
+    PG_PORT=
 
-MIGRATION_DIR=./migrations
+    MIGRATION_DIR=./migrations
 
-PG_DSN=""
-MIGRATION_DSN=""
+    PG_DSN=""
+    MIGRATION_DSN=""
 
-GRPC_HOST=
-GRPC_PORT=
+    GRPC_HOST=
+    GRPC_PORT=
 
-HTTP_HOST=
-HTTP_PORT=
+    HTTP_HOST=
+    HTTP_PORT=
 
-SWAGGER_HOST=
-SWAGGER_PORT=
+    SWAGGER_HOST=
+    SWAGGER_PORT=
 
-REDIS_HOST=
-REDIS_PORT=
-REDIS_CONNECTION_TIMEOUT_SEC=
-REDIS_MAX_IDLE=
-REDIS_IDLE_TIMEOUT_SEC=
+    REDIS_HOST=
+    REDIS_PORT=
+    REDIS_CONNECTION_TIMEOUT_SEC=
+    REDIS_MAX_IDLE=
+    REDIS_IDLE_TIMEOUT_SEC=
 
-KAFKA_BROKERS=localhost:9092, localhost:9093, localhost:9094
-KAFKA_GROUP_ID=
-KAFKA_TOPIC_NAME=
+    KAFKA_BROKERS=localhost:9092, localhost:9093, localhost:9094
+    KAFKA_GROUP_ID=
+    KAFKA_TOPIC_NAME=
+    ```
 
 2. Запустите внешние сервисы:
 
-docker-compose up -d
+    ```bash
+    docker-compose up -d
+    ```
 
 3. Выполните команду по инициализации проекта:
 
-make init
+    ```bash
+    make init
+    ```
 
 4. Запустите проект:
 
-go run cmd/grpc_server/main.go
+    ```bash
+    go run cmd/grpc_server/main.go
+    ```
