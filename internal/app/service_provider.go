@@ -29,6 +29,7 @@ import (
 	"go-auth/internal/service"
 
 	accessService "go-auth/internal/service/access"
+	accessCacheService "go-auth/internal/service/access/cache"
 	authService "go-auth/internal/service/auth"
 	userConsumerService "go-auth/internal/service/consumer"
 	userService "go-auth/internal/service/user"
@@ -61,8 +62,9 @@ type serviceProvider struct {
 	userConsumerService service.UserConsumerService
 	userProducerService service.UserProducerService
 
-	authService   service.AuthService
-	accessService service.AccessService
+	authService        service.AuthService
+	accessService      service.AccessService
+	accessCacheService service.AccessCacheService
 
 	consumer             kafka.Consumer
 	consumerGroup        sarama.ConsumerGroup
@@ -276,6 +278,15 @@ func (s *serviceProvider) GetUserCacheService(ctx context.Context) service.UserC
 	return s.userCacheService
 }
 
+// Init Access cache service
+func (s *serviceProvider) GetAccessCacheService(ctx context.Context) service.AccessCacheService {
+	if s.accessCacheService == nil {
+		s.accessCacheService = accessCacheService.NewAccessCacheService(s.GetAccessRedisRepository(ctx), s.txManager)
+	}
+
+	return s.accessCacheService
+}
+
 // Init User producer service
 func (s *serviceProvider) GetUserProducer(ctx context.Context) service.UserProducerService {
 	if s.userProducerService == nil {
@@ -329,6 +340,7 @@ func (s *serviceProvider) GetAuthService(ctx context.Context) service.AuthServic
 func (s *serviceProvider) GetAccessService(ctx context.Context) service.AccessService {
 	if s.accessService == nil {
 		s.accessService = accessService.NewAccessService(
+			s.GetAccessCacheService(ctx),
 			s.GetUserRepository(ctx),
 			s.GetAccessRepository(ctx),
 			s.GetAccessRedisRepository(ctx),

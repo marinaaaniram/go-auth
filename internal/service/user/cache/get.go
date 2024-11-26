@@ -6,16 +6,6 @@ import (
 	"go-auth/internal/model"
 )
 
-// Get User in cache
-func (s *serv) Get(ctx context.Context, id int64) (*model.User, error) {
-	userObj, err := s.userRedisRepository.Get(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-
-	return userObj, nil
-}
-
 // Create User in cache
 func (s *serv) Create(ctx context.Context, info *model.User) (int64, error) {
 	var id int64
@@ -39,4 +29,14 @@ func (s *serv) Create(ctx context.Context, info *model.User) (int64, error) {
 	}
 
 	return id, nil
+}
+
+// Get User in cache
+func (s *serv) Get(ctx context.Context, id int64) (*model.User, error) {
+	userObj, err := s.userRedisRepository.Get(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userObj, nil
 }

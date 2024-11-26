@@ -18,6 +18,12 @@ type AccessService interface {
 	Check(ctx context.Context, endpointAddress string) error
 }
 
+// Describe Access cache service interface
+type AccessCacheService interface {
+	Create(ctx context.Context, accessibleRoles []string, endpointAddress string) (string, error)
+	Get(ctx context.Context, endpointAddress string) ([]string, error)
+}
+
 // Describe User service interface
 type UserService interface {
 	Create(ctx context.Context, user *model.User) (int64, error)

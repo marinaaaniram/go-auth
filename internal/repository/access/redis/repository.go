@@ -1,16 +1,13 @@
-package pg
+package redis
 
 import (
 	"context"
-	"strconv"
+	"fmt"
 
 	redigo "github.com/gomodule/redigo/redis"
 
 	"go-auth/internal/client/cache"
-	"go-auth/internal/model"
 	"go-auth/internal/repository"
-	"go-auth/internal/repository/user/redis/converter"
-	modelRedis "go-auth/internal/repository/user/redis/model"
 )
 
 type repo struct {
@@ -18,27 +15,25 @@ type repo struct {
 }
 
 // Create Redis repository
-func NewAccessRedisRepository(cl cache.RedisClient) repository.UserRedisRepository {
+func NewAccessRedisRepository(cl cache.RedisClient) repository.AccessRedisRepository {
 	return &repo{cl: cl}
 }
 
-// Create User in redis
-func (r *repo) Create(ctx context.Context, user *model.User) (int64, error) {
-	id := int64(1)
+// Create Access in redis
+func (r *repo) Create(ctx context.Context, accessibleRoles []string, endpointAddress string) error {
+	fmt.Printf("33333333\n")
 
-	idStr := strconv.FormatInt(id, 10)
-	err := r.cl.HashSet(ctx, idStr, user)
+	err := r.cl.HashSet(ctx, endpointAddress, accessibleRoles)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
-	return id, nil
+	return nil
 }
 
-// Create User from redis
-func (r *repo) Get(ctx context.Context, id int64) (*model.User, error) {
-	idStr := strconv.FormatInt(id, 10)
-	values, err := r.cl.HGetAll(ctx, idStr)
+// Create Access from redis
+func (r *repo) Get(ctx context.Context, endpointAddress string) ([]string, error) {
+	values, err := r.cl.HGetAll(ctx, endpointAddress)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +42,11 @@ func (r *repo) Get(ctx context.Context, id int64) (*model.User, error) {
 		return nil, nil
 	}
 
-	var user modelRedis.User
-	err = redigo.ScanStruct(values, &user)
+	var accessibleRoles []string
+	err = redigo.ScanStruct(values, &accessibleRoles)
 	if err != nil {
 		return nil, err
 	}
 
-	return converter.FromRedisToModel(&user), nil
+	return accessibleRoles, nil
 }

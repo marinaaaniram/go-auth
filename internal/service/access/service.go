@@ -6,6 +6,7 @@ import (
 )
 
 type serv struct {
+	accessCacheService    service.AccessCacheService
 	userRepository        repository.UserRepository
 	accessRepository      repository.AccessRepository
 	accessRedisRepository repository.AccessRedisRepository
@@ -13,11 +14,13 @@ type serv struct {
 
 // Create Access service
 func NewAccessService(
+	accessCacheService service.AccessCacheService,
 	userRepository repository.UserRepository,
 	accessRepository repository.AccessRepository,
 	accessRedisRepository repository.AccessRedisRepository,
 ) service.AccessService {
 	return &serv{
+		accessCacheService:    accessCacheService,
 		userRepository:        userRepository,
 		accessRepository:      accessRepository,
 		accessRedisRepository: accessRedisRepository,

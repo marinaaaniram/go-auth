@@ -13,8 +13,8 @@ type AccessRepository interface {
 
 // Describe Access redis repository interface
 type AccessRedisRepository interface {
-	Create(ctx context.Context, user *model.User) (int64, error)
-	Get(ctx context.Context, id int64) (*model.User, error)
+	Create(ctx context.Context, accessibleRoles []string, endpointAddress string) error
+	Get(ctx context.Context, endpointAddress string) ([]string, error)
 }
 
 // Describe User pg repository interface
