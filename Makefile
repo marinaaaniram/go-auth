@@ -27,6 +27,8 @@ install-deps:
 get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
+	go get -u google.golang.org/protobuf/types/known/emptypb
+	go get -u github.com/gojuno/minimock/v3
 	go get -u github.com/marinaaaniram/go-common-platform@latest
 	go mod tidy 
 
@@ -35,7 +37,7 @@ generate:
 	make generate-user-api
 	make generate-auth-api
 	make generate-access-api
-	$(LOCAL_BIN)/statik -src=pkg/swagger/ -include='*.css,*.html,*.js,*.json,*.png'
+	$(LOCAL_BIN)/statik -src=pkg/swagger/ -include='*.css,*.html,*.js,*.json,*.png' -f
 
 generate-user-api:
 	mkdir -p pkg/user_v1
@@ -48,8 +50,6 @@ generate-user-api:
 	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
 	--openapiv2_out=allow_merge=true,merge_file_name=api:pkg/swagger \
 	--plugin=protoc-gen-openapiv2=bin/protoc-gen-openapiv2 \
-	--validate_out lang=go:pkg/user_v1 --validate_opt=paths=source_relative \
-	--plugin=protoc-gen-validate=bin/protoc-gen-validate \
 	api/user_v1/user.proto
 
 generate-auth-api:
@@ -71,13 +71,13 @@ generate-access-api:
 	api/access_v1/access.proto
 
 local-migration-status:
-	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
+	$(LOCAL_BIN)/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
 
 local-migration-up:
-	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} up -v
+	$(LOCAL_BIN)/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} up -v
 
 local-migration-down:
-	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} down -v
+	$(LOCAL_BIN)/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} down -v
 
 generate-mocks:
 	export PATH=$(LOCAL_BIN):$$PATH && go generate ./internal/service/...

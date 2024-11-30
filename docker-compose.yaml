@@ -3,6 +3,15 @@ volumes:
   redis-data:
 
 services:
+  go-auth:
+    build: .
+    ports:
+      - "50051:50051"
+    env_file: .env
+    volumes:
+      - .:/go/src/go-auth
+    command: tail -f /dev/null
+
   postgres:
     image: postgres:17.0-alpine3.20
     environment:
