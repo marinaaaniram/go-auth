@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Describe Access pg repository interface

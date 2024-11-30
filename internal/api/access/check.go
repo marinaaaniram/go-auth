@@ -3,8 +3,9 @@ package access
 import (
 	"context"
 
-	"go-auth/internal/errors"
-	desc "go-auth/pkg/access_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/access_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/errors"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 )

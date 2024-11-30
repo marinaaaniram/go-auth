@@ -3,8 +3,9 @@ package auth
 import (
 	"context"
 
-	"go-auth/internal/errors"
-	desc "go-auth/pkg/auth_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/auth_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/errors"
 )
 
 // GetAccessToken Auth in desc layer

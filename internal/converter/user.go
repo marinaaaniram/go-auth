@@ -3,9 +3,10 @@ package converter
 import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"go-auth/internal/constant"
-	"go-auth/internal/model"
-	desc "go-auth/pkg/user_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Convert model.UserRole format to desc.RoleEnum

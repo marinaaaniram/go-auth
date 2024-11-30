@@ -9,12 +9,12 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"go-auth/internal/constant"
-	"go-auth/internal/model"
-	"go-auth/internal/repository"
-	repoMocks "go-auth/internal/repository/mocks"
-	"go-auth/internal/service"
-	"go-auth/internal/service/user"
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/repository"
+	repoMocks "github.com/marinaaaniram/go-auth/internal/repository/mocks"
+	"github.com/marinaaaniram/go-auth/internal/service"
+	"github.com/marinaaaniram/go-auth/internal/service/user"
 )
 
 func TestServiceUserUpdate(t *testing.T) {

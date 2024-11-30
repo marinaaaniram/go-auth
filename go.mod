@@ -1,4 +1,4 @@
-module go-auth
+module github.com/marinaaaniram/go-auth
 
 go 1.22.5
 

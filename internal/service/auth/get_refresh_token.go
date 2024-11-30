@@ -2,9 +2,10 @@ package auth
 
 import (
 	"context"
-	"go-auth/internal/constant"
-	"go-auth/internal/model"
-	"go-auth/internal/utils"
+
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/utils"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

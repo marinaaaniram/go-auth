@@ -1,8 +1,8 @@
 package cache
 
 import (
-	"go-auth/internal/repository"
-	"go-auth/internal/service"
+	"github.com/marinaaaniram/go-auth/internal/repository"
+	"github.com/marinaaaniram/go-auth/internal/service"
 
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 )

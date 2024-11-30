@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/constant"
 )
 
 // Internal User model

@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	"go-auth/internal/client/cache"
-	"go-auth/internal/errors"
-	"go-auth/internal/repository"
+	"github.com/marinaaaniram/go-auth/internal/client/cache"
+	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/repository"
 )
 
 type repo struct {

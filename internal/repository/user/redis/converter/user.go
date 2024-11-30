@@ -3,9 +3,9 @@ package converter
 import (
 	"time"
 
-	"go-auth/internal/constant"
-	"go-auth/internal/model"
-	modelRedis "go-auth/internal/repository/user/redis/model"
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/model"
+	modelRedis "github.com/marinaaaniram/go-auth/internal/repository/user/redis/model"
 )
 
 // Convert User model redis to internal model

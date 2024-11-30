@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"go-auth/internal/app"
+	"github.com/marinaaaniram/go-auth/internal/app"
 )
 
 func main() {

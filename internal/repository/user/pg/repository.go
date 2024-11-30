@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/marinaaaniram/go-common-platform/pkg/db"
 
-	"go-auth/internal/repository"
+	"github.com/marinaaaniram/go-auth/internal/repository"
 )
 
 const (

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Describe Auth service interface

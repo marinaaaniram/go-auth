@@ -3,8 +3,8 @@ package user
 import (
 	"context"
 
-	"go-auth/internal/errors"
-	"go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Update User in service layer

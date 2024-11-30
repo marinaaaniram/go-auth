@@ -4,9 +4,9 @@ import (
 	"context"
 	"strings"
 
-	"go-auth/internal/constant"
-	"go-auth/internal/errors"
-	"go-auth/internal/utils"
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/utils"
 
 	"google.golang.org/grpc/metadata"
 )

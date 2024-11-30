@@ -6,7 +6,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
 
-	"go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 func GenerateToken(info model.UserAuthInfo, secretKey []byte, duration time.Duration) (string, error) {

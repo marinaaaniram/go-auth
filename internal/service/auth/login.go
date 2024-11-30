@@ -3,10 +3,10 @@ package auth
 import (
 	"context"
 
-	"go-auth/internal/constant"
-	"go-auth/internal/errors"
-	"go-auth/internal/model"
-	"go-auth/internal/utils"
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/utils"
 )
 
 // Login Auth in service layer

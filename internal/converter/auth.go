@@ -1,8 +1,9 @@
 package converter
 
 import (
-	"go-auth/internal/model"
-	desc "go-auth/pkg/auth_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/auth_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Convert desc LoginRequest fields to internal Auth model

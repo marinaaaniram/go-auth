@@ -6,7 +6,7 @@ package mocks
 
 import (
 	"context"
-	"go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/model"
 	"sync"
 	mm_atomic "sync/atomic"
 	mm_time "time"

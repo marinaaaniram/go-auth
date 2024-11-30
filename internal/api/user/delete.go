@@ -5,8 +5,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-auth/internal/errors"
-	desc "go-auth/pkg/user_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/errors"
 )
 
 // Delete User in desc layer

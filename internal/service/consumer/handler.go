@@ -7,7 +7,7 @@ import (
 
 	"github.com/IBM/sarama"
 
-	"go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Save User from consumer

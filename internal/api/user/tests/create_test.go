@@ -9,13 +9,14 @@ import (
 	"github.com/gojuno/minimock/v3"
 	"github.com/stretchr/testify/require"
 
-	"go-auth/internal/api/user"
-	"go-auth/internal/constant"
-	"go-auth/internal/errors"
-	"go-auth/internal/model"
-	"go-auth/internal/service"
-	serviceMocks "go-auth/internal/service/mocks"
-	desc "go-auth/pkg/user_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/api/user"
+	"github.com/marinaaaniram/go-auth/internal/constant"
+	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/model"
+	"github.com/marinaaaniram/go-auth/internal/service"
+	serviceMocks "github.com/marinaaaniram/go-auth/internal/service/mocks"
 )
 
 func TestApiUserCreate(t *testing.T) {

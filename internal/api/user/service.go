@@ -1,8 +1,9 @@
 package user
 
 import (
-	"go-auth/internal/service"
-	desc "go-auth/pkg/user_v1"
+	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+
+	"github.com/marinaaaniram/go-auth/internal/service"
 )
 
 type Implementation struct {

@@ -3,7 +3,7 @@ package kafka
 import (
 	"context"
 
-	"go-auth/internal/client/kafka/consumer"
+	"github.com/marinaaaniram/go-auth/internal/client/kafka/consumer"
 )
 
 type Consumer interface {

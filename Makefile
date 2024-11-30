@@ -85,11 +85,11 @@ generate-mocks:
 
 test:
 	go clean -testcache
-	go test ./... -covermode count -coverpkg=go-auth/internal/... -count 1
+	go test ./... -covermode count -coverpkg=github.com/marinaaaniram/go-auth/internal/... -count 1
 
 test-coverage:
 	go clean -testcache
-	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=go-auth/internal/... -count 1
+	go test ./... -coverprofile=coverage.tmp.out -covermode count -coverpkg=github.com/marinaaaniram/go-auth/internal/... -count 1
 	grep -v 'mocks\|config' coverage.tmp.out  > coverage.out
 	rm coverage.tmp.out
 	go tool cover -html=coverage.out;
