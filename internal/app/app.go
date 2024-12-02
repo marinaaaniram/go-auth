@@ -14,6 +14,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 	"github.com/natefinch/lumberjack"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
 	"go.uber.org/zap"
@@ -36,10 +37,11 @@ import (
 var logLevel = flag.String("l", "info", "log level")
 
 type App struct {
-	serviceProvider *serviceProvider
-	grpcServer      *grpc.Server
-	httpServer      *http.Server
-	swaggerServer   *http.Server
+	serviceProvider  *serviceProvider
+	grpcServer       *grpc.Server
+	httpServer       *http.Server
+	swaggerServer    *http.Server
+	prometheusServer *http.Server
 }
 
 // Create app
@@ -94,6 +96,15 @@ func (a *App) Run(ctx context.Context) error {
 	go func() {
 		defer wg.Done()
 
+		err := a.runPrometheusServer()
+		if err != nil {
+			log.Fatalf("Failed to run Swagger server: %v", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
 		err := a.serviceProvider.GetUserConsumer(ctx).RunConsumer(ctx)
 		if err != nil {
 			log.Printf("Failed to run consumer: %s", err.Error())
@@ -113,6 +124,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initGRPCServer,
 		a.initHTTPServer,
 		a.initSwaggerServer,
+		a.initPrometheusServer,
 	}
 
 	for _, f := range inits {
@@ -212,6 +224,19 @@ func (a *App) initSwaggerServer(_ context.Context) error {
 	return nil
 }
 
+// Init Swagger server
+func (a *App) initPrometheusServer(_ context.Context) error {
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.Handler())
+
+	a.prometheusServer = &http.Server{
+		Addr:    "0.0.0.0:2112",
+		Handler: mux,
+	}
+
+	return nil
+}
+
 // Run GRPC server
 func (a *App) runGRPCServer() error {
 	log.Printf("GRPC server is running on %s", a.serviceProvider.GRPCConfig().Address())
@@ -246,6 +271,17 @@ func (a *App) runSwaggerServer() error {
 	log.Printf("Swagger server is running on %s", a.serviceProvider.SwaggerConfig().Address())
 
 	err := a.swaggerServer.ListenAndServe()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *App) runPrometheusServer() error {
+	log.Printf("Prometheus server is running on %s", "localhost:2112")
+
+	err := a.prometheusServer.ListenAndServe()
 	if err != nil {
 		return err
 	}
