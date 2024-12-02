@@ -12,8 +12,10 @@ import (
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/marinaaaniram/go-common-platform/pkg/closer"
 	"github.com/natefinch/lumberjack"
+	"github.com/opentracing/opentracing-go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
@@ -33,9 +35,14 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/interceptor"
 	"github.com/marinaaaniram/go-auth/internal/logger"
 	"github.com/marinaaaniram/go-auth/internal/metric"
+	"github.com/marinaaaniram/go-auth/internal/tracing"
 )
 
 var logLevel = flag.String("l", "info", "log level")
+
+const (
+	serviceName = "github.com/marinaaaniram/go-auth"
+)
 
 type App struct {
 	serviceProvider  *serviceProvider
@@ -129,6 +136,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initPrometheusServer,
 	}
 	logger.Init(getCore(getAtomicLevel()))
+	tracing.Init(logger.Logger(), serviceName)
 
 	for _, f := range inits {
 		err := f(ctx)
@@ -174,6 +182,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
+				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
 				interceptor.MetricsInterceptor,
 				interceptor.LogInterceptor,
 				interceptor.ValidateInterceptor,
