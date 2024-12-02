@@ -1,0 +1,16 @@
+{"level":"error","timestamp":"2024-12-02T13:47:14.778Z","msg":"rpc error: code = NotFound desc = user with id 4 not found","method":"/user_v1.UserV1/Get","req":"id:4"}
+{"level":"info","timestamp":"2024-12-02T13:47:14.784Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:4","res":"<nil>","duration":0.015507}
+{"level":"info","timestamp":"2024-12-02T13:51:23.980Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98  userInfo:{name:\"User\"  email:\"user@test.com\"  role:USER  created_at:{seconds:1732638779  nanos:523564000}}}","duration":0.012881834}
+{"level":"info","timestamp":"2024-12-02T13:51:39.831Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98  userInfo:{name:\"User\"  email:\"user@test.com\"  role:USER  created_at:{seconds:1732638779  nanos:523564000}}}","duration":0.003952666}
+{"level":"info","timestamp":"2024-12-02T13:51:44.836Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98  userInfo:{name:\"User\"  email:\"user@test.com\"  role:USER  created_at:{seconds:1732638779  nanos:523564000}}}","duration":0.003878292}
+{"level":"info","timestamp":"2024-12-02T13:52:02.696Z","msg":"get user from cache","id":98}
+{"level":"info","timestamp":"2024-12-02T13:52:02.704Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98 userInfo:{name:\"User\" email:\"user@test.com\" role:USER created_at:{seconds:1732638779 nanos:523564000}}}","duration":0.007792833}
+{"level":"info","timestamp":"2024-12-02T13:52:37.438Z","msg":"!!!","s.userCacheService":{}}
+{"level":"info","timestamp":"2024-12-02T13:52:37.446Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98 userInfo:{name:\"User\" email:\"user@test.com\" role:USER created_at:{seconds:1732638779 nanos:523564000}}}","duration":0.008103083}
+{"level":"info","timestamp":"2024-12-02T13:52:58.930Z","msg":"!!!","s.userCacheService":{}}
+{"level":"info","timestamp":"2024-12-02T13:52:58.931Z","msg":"111","s.userCacheService":{}}
+{"level":"info","timestamp":"2024-12-02T13:52:58.935Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98 userInfo:{name:\"User\" email:\"user@test.com\" role:USER created_at:{seconds:1732638779 nanos:523564000}}}","duration":0.004637666}
+{"level":"info","timestamp":"2024-12-02T13:53:24.780Z","msg":"!!!","s.userCacheService":{}}
+{"level":"info","timestamp":"2024-12-02T13:53:24.782Z","msg":"111","s.userCacheService":{}}
+{"level":"info","timestamp":"2024-12-02T13:53:24.784Z","msg":"222","userObj":null}
+{"level":"info","timestamp":"2024-12-02T13:53:24.789Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:98","res":"user:{id:98  userInfo:{name:\"User\"  email:\"user@test.com\"  role:USER  created_at:{seconds:1732638779  nanos:523564000}}}","duration":0.0092335}
