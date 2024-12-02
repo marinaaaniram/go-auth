@@ -32,7 +32,7 @@
     REDIS_MAX_IDLE=
     REDIS_IDLE_TIMEOUT_SEC=
 
-    KAFKA_BROKERS=localhost:9092, localhost:9093, localhost:9094
+    KAFKA_BROKERS=
     KAFKA_GROUP_ID=
     KAFKA_TOPIC_NAME=
     ```

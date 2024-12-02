@@ -32,6 +32,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/config"
 	"github.com/marinaaaniram/go-auth/internal/interceptor"
 	"github.com/marinaaaniram/go-auth/internal/logger"
+	"github.com/marinaaaniram/go-auth/internal/metric"
 )
 
 var logLevel = flag.String("l", "info", "log level")
@@ -120,12 +121,14 @@ func (a *App) Run(ctx context.Context) error {
 func (a *App) initDeps(ctx context.Context) error {
 	inits := []func(context.Context) error{
 		a.initConfig,
+		a.initMetrics,
 		a.initServiceProvider,
 		a.initGRPCServer,
 		a.initHTTPServer,
 		a.initSwaggerServer,
 		a.initPrometheusServer,
 	}
+	logger.Init(getCore(getAtomicLevel()))
 
 	for _, f := range inits {
 		err := f(ctx)
@@ -153,6 +156,16 @@ func (a *App) initServiceProvider(_ context.Context) error {
 	return nil
 }
 
+// Init metrics
+func (a *App) initMetrics(ctx context.Context) error {
+	err := metric.Init(ctx)
+	if err != nil {
+		log.Fatalf("Failed to init metrics: %v", err)
+	}
+
+	return nil
+}
+
 // Init GRPC server
 func (a *App) initGRPCServer(ctx context.Context) error {
 	logger.Init(getCore(getAtomicLevel()))
@@ -161,6 +174,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
+				interceptor.MetricsInterceptor,
 				interceptor.LogInterceptor,
 				interceptor.ValidateInterceptor,
 			)),
@@ -177,8 +191,6 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 
 // Init HTTP server
 func (a *App) initHTTPServer(ctx context.Context) error {
-	logger.Init(getCore(getAtomicLevel()))
-
 	mux := runtime.NewServeMux()
 
 	opts := []grpc.DialOption{
@@ -279,7 +291,7 @@ func (a *App) runSwaggerServer() error {
 }
 
 func (a *App) runPrometheusServer() error {
-	log.Printf("Prometheus server is running on %s", "localhost:2112")
+	log.Printf("Prometheus server is running on %s", "0.0.0.0:2112")
 
 	err := a.prometheusServer.ListenAndServe()
 	if err != nil {
