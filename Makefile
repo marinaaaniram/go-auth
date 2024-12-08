@@ -8,6 +8,8 @@ LOCAL_MIGRATION_DSN=$(MIGRATION_DSN)
 init:
 	go clean -modcache
 	make install-deps
+	rm -f go.sum 
+	go mod tidy
 	make vendor-proto
 	make generate
 	make generate-mocks
@@ -23,12 +25,6 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20.0
 	GOBIN=$(LOCAL_BIN) go install github.com/rakyll/statik@v0.1.7
 	GOBIN=$(LOCAL_BIN) go install github.com/bojand/ghz/cmd/ghz@latest
-
-get-deps:
-	rm -f go.sum 
-	go get -u github.com/marinaaaniram/go-common-platform@latest
-	go get github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc
-	go mod tidy
 
 generate:
 	mkdir -p pkg/swagger
