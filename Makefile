@@ -12,12 +12,13 @@ init:
 	make vendor-proto
 	make generate
 	make generate-mocks
+	make local-migration-up
 
 install-deps:
 	GOBIN=$(LOCAL_BIN) go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28.1
 	GOBIN=$(LOCAL_BIN) go install -mod=mod google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 	GOBIN=$(LOCAL_BIN) go install github.com/pressly/goose/v3/cmd/goose@v3.14.0
-	GOBIN=$(LOCAL_BIN) go install github.com/gojuno/minimock/v3/cmd/minimock@latest
+	GOBIN=$(LOCAL_BIN) go install github.com/gojuno/minimock/v3/cmd/minimock@v3.4.3
 	GOBIN=$(LOCAL_BIN) go install github.com/envoyproxy/protoc-gen-validate@v1.0.4
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.20.0
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20.0
@@ -26,13 +27,17 @@ install-deps:
 get-deps:
 	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
+	go get -u google.golang.org/protobuf/types/known/emptypb
+	go get -u github.com/gojuno/minimock/v3
 	go get -u github.com/marinaaaniram/go-common-platform@latest
 	go mod tidy 
 
 generate:
 	mkdir -p pkg/swagger
 	make generate-user-api
-	$(LOCAL_BIN)/statik -src=pkg/swagger/ -include='*.css,*.html,*.js,*.json,*.png'
+	make generate-auth-api
+	make generate-access-api
+	$(LOCAL_BIN)/statik -src=pkg/swagger/ -include='*.css,*.html,*.js,*.json,*.png' -f
 
 generate-user-api:
 	mkdir -p pkg/user_v1
@@ -45,18 +50,34 @@ generate-user-api:
 	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
 	--openapiv2_out=allow_merge=true,merge_file_name=api:pkg/swagger \
 	--plugin=protoc-gen-openapiv2=bin/protoc-gen-openapiv2 \
-	--validate_out lang=go:pkg/user_v1 --validate_opt=paths=source_relative \
-	--plugin=protoc-gen-validate=bin/protoc-gen-validate \
 	api/user_v1/user.proto
 
+generate-auth-api:
+	mkdir -p pkg/auth_v1
+	protoc --proto_path api/auth_v1 \
+	--go_out=pkg/auth_v1 --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=pkg/auth_v1 --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	api/auth_v1/auth.proto
+
+generate-access-api:
+	mkdir -p pkg/access_v1
+	protoc --proto_path api/access_v1 \
+	--go_out=pkg/access_v1 --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=pkg/access_v1 --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	api/access_v1/access.proto
+
 local-migration-status:
-	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
+	$(LOCAL_BIN)/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
 
 local-migration-up:
-	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} up -v
+	$(LOCAL_BIN)/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} up -v
 
 local-migration-down:
-	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} down -v
+	$(LOCAL_BIN)/goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} down -v
 
 generate-mocks:
 	export PATH=$(LOCAL_BIN):$$PATH && go generate ./internal/service/...

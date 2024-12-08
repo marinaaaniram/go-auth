@@ -16,3 +16,8 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt *time.Time
 }
+
+type UserAuthInfo struct {
+	Email string            `json:"email"`
+	Role  constant.UserRole `json:"role"`
+}

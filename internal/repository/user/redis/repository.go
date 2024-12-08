@@ -1,4 +1,4 @@
-package pg
+package redis
 
 import (
 	"context"
@@ -18,7 +18,7 @@ type repo struct {
 }
 
 // Create Redis repository
-func NewRedisRepository(cl cache.RedisClient) repository.UserRedisRepository {
+func NewUserRedisRepository(cl cache.RedisClient) repository.UserRedisRepository {
 	return &repo{cl: cl}
 }
 

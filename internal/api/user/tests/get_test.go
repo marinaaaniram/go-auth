@@ -10,13 +10,14 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
+
 	"github.com/marinaaaniram/go-auth/internal/api/user"
 	"github.com/marinaaaniram/go-auth/internal/constant"
 	"github.com/marinaaaniram/go-auth/internal/errors"
 	"github.com/marinaaaniram/go-auth/internal/model"
 	"github.com/marinaaaniram/go-auth/internal/service"
 	serviceMocks "github.com/marinaaaniram/go-auth/internal/service/mocks"
-	desc "github.com/marinaaaniram/go-auth/pkg/user_v1"
 )
 
 func TestApiUserGet(t *testing.T) {

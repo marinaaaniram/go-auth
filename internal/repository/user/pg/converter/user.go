@@ -30,6 +30,7 @@ func FromRepoToUserGet(user *modelRepo.User) *model.User {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
+		Password:  user.Password,
 		Role:      constant.UserRole(user.Role),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: repoNullTimeToTime(user.UpdatedAt),
