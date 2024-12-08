@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i go-auth/internal/service.UserConsumerService -o user_consumer_service_minimock.go -n UserConsumerServiceMock -p mocks
+//go:generate minimock -i github.com/marinaaaniram/go-auth/internal/service.UserConsumerService -o user_consumer_service_minimock.go -n UserConsumerServiceMock -p mocks
 
 import (
 	"context"

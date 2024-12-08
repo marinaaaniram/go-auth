@@ -2,16 +2,16 @@
 
 package mocks
 
-//go:generate minimock -i go-auth/internal/repository.UserRepository -o user_repository_minimock.go -n UserRepositoryMock -p mocks
+//go:generate minimock -i github.com/marinaaaniram/go-auth/internal/repository.UserRepository -o user_repository_minimock.go -n UserRepositoryMock -p mocks
 
 import (
 	"context"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	"sync"
 	mm_atomic "sync/atomic"
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // UserRepositoryMock implements mm_repository.UserRepository
