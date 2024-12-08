@@ -201,6 +201,7 @@ func (a *App) initGRPCServer(ctx context.Context) error {
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
 				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
+				interceptor.ErrorCodesInterceptor,
 				interceptor.NewRateLimiterInterceptor(rateLimiter).Unary,
 				interceptor.NewCircuitBreakerInterceptor(cb).Unary,
 				interceptor.MetricsInterceptor,

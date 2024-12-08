@@ -1,0 +1,4 @@
+{"level":"error","timestamp":"2024-12-08T17:03:23.058Z","msg":"rpc error: code = NotFound desc = user with id 0 not found","method":"/user_v1.UserV1/Get","req":""}
+{"level":"info","timestamp":"2024-12-08T17:03:23.060Z","msg":"request","method":"/user_v1.UserV1/Get","req":"","res":"<nil>","duration":0.058797}
+{"level":"error","timestamp":"2024-12-08T17:03:59.995Z","msg":"rpc error: code = NotFound desc = user with idddd 54559236 not found","method":"/user_v1.UserV1/Get","req":"id:54559236"}
+{"level":"info","timestamp":"2024-12-08T17:03:59.997Z","msg":"request","method":"/user_v1.UserV1/Get","req":"id:54559236","res":"<nil>","duration":0.007761167}

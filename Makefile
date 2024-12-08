@@ -8,7 +8,6 @@ LOCAL_MIGRATION_DSN=$(MIGRATION_DSN)
 init:
 	go clean -modcache
 	make install-deps
-	make get-deps
 	make vendor-proto
 	make generate
 	make generate-mocks
@@ -26,13 +25,10 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install github.com/bojand/ghz/cmd/ghz@latest
 
 get-deps:
-	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
-	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go get -u google.golang.org/protobuf/types/known/emptypb
-	go get -u github.com/gojuno/minimock/v3
-	go get -u github.com/sony/gobreaker/v2
+	rm -f go.sum 
 	go get -u github.com/marinaaaniram/go-common-platform@latest
-	go mod tidy 
+	go get github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc
+	go mod tidy
 
 generate:
 	mkdir -p pkg/swagger
