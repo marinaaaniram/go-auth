@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"sync"
+	"time"
 
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -19,6 +20,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
+	"github.com/sony/gobreaker"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
@@ -35,6 +37,7 @@ import (
 	"github.com/marinaaaniram/go-auth/internal/interceptor"
 	"github.com/marinaaaniram/go-auth/internal/logger"
 	"github.com/marinaaaniram/go-auth/internal/metric"
+	"github.com/marinaaaniram/go-auth/internal/rate_limiter"
 	"github.com/marinaaaniram/go-auth/internal/tracing"
 )
 
@@ -178,11 +181,28 @@ func (a *App) initMetrics(ctx context.Context) error {
 func (a *App) initGRPCServer(ctx context.Context) error {
 	logger.Init(getCore(getAtomicLevel()))
 
+	rateLimiter := rate_limiter.NewTokenBucketLimiter(ctx, 10, time.Second)
+
+	cb := gobreaker.NewCircuitBreaker(gobreaker.Settings{
+		Name:        "my-service",
+		MaxRequests: 3,
+		Timeout:     5 * time.Second,
+		ReadyToTrip: func(counts gobreaker.Counts) bool {
+			failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+			return failureRatio >= 0.6
+		},
+		OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
+			log.Printf("Circuit Breaker: %s, changed from %v, to %v\n", name, from, to)
+		},
+	})
+
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
 		grpc.UnaryInterceptor(
 			grpcMiddleware.ChainUnaryServer(
 				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
+				interceptor.NewRateLimiterInterceptor(rateLimiter).Unary,
+				interceptor.NewCircuitBreakerInterceptor(cb).Unary,
 				interceptor.MetricsInterceptor,
 				interceptor.LogInterceptor,
 				interceptor.ValidateInterceptor,

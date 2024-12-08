@@ -30,6 +30,7 @@ get-deps:
 	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	go get -u google.golang.org/protobuf/types/known/emptypb
 	go get -u github.com/gojuno/minimock/v3
+	go get -u github.com/sony/gobreaker/v2
 	go get -u github.com/marinaaaniram/go-common-platform@latest
 	go mod tidy 
 
