@@ -1,12 +1,15 @@
 volumes:
   postgres_volume:
   redis-data:
+  prometheus_data:
+  grafana_data:
 
 services:
   go-auth:
     build: .
     ports:
       - "50051:50051"
+      - "2112:2112"
     env_file: .env
     volumes:
       - .:/go/src/go-auth
@@ -69,7 +72,7 @@ services:
       KAFKA_BROKER_ID: 1 # уникальный идентификатор брокера Kafka
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181' # адрес подключения к Zookeeper
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT # указывает протоколы безопасности для слушателей
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9092 # указывает, какие адреса будут использоваться для общения с Kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://kafka1:9092 # указывает, какие адреса будут использоваться для общения с Kafka
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3 # фактор репликации топика
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0 # время задержки перед началом перебалансировки группы
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2 # минимальное количество реплик, которые должны быть в синхронизации для топика состояния транзакции
@@ -87,7 +90,7 @@ services:
       KAFKA_BROKER_ID: 2 # уникальный идентификатор брокера Kafka
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181' # адрес подключения к Zookeeper
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT # указывает протоколы безопасности для слушателей
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://localhost:9093 # указывает, какие адреса будут использоваться для общения с Kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29093,PLAINTEXT_HOST://kafka2:9093 # указывает, какие адреса будут использоваться для общения с Kafka
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3 # фактор репликации топика смещений
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0 # время задержки перед началом перебалансировки группы
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2 # минимальное количество реплик, которые должны быть в синхронизации для топика состояния транзакции
@@ -105,7 +108,7 @@ services:
       KAFKA_BROKER_ID: 3 # уникальный идентификатор брокера Kafka
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181' # адрес подключения к Zookeeper
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT # указывает протоколы безопасности для слушателей
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://localhost:9094 # указывает, какие адреса будут использоваться для общения с Kafka
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://kafka3:9094 # указывает, какие адреса будут использоваться для общения с Kafka
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3 # фактор репликации топика смещений
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0 # время задержки перед началом перебалансировки группы
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2 # минимальное количество реплик, которые должны быть в синхронизации для топика состояния транзакции
@@ -118,3 +121,19 @@ services:
       - "8082:8080" # порт для клиентских соединений Kafka UI
     environment:
       DYNAMIC_CONFIG_ENABLED: true
+
+  prometheus:
+    image: prom/prometheus:v2.37.9
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alerts.yml:/etc/prometheus/alerts.yml
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana-oss:10.0.3
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana

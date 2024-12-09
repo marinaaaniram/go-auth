@@ -7,12 +7,12 @@ import (
 )
 
 // Convert desc LoginRequest fields to internal Auth model
-func FromDescLoginToAuth(req *desc.LoginRequest) *model.Auth {
+func FromDescLoginToAuth(req *desc.LoginRequest) *model.AuthInput {
 	if req == nil {
 		return nil
 	}
 
-	return &model.Auth{
+	return &model.AuthInput{
 		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
 	}

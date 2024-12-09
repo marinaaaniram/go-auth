@@ -8,7 +8,7 @@ import (
 
 // Describe Auth service interface
 type AuthService interface {
-	Login(ctx context.Context, auth *model.Auth) (string, error)
+	Login(ctx context.Context, auth *model.AuthInput) (*model.AuthOutput, error)
 	GetRefreshToken(ctx context.Context, refreshToken string) (string, error)
 	GetAccessToken(ctx context.Context, accessToken string) (string, error)
 }

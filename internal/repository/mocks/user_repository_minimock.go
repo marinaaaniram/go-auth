@@ -2,16 +2,16 @@
 
 package mocks
 
-//go:generate minimock -i go-auth/internal/repository.UserRepository -o user_repository_minimock.go -n UserRepositoryMock -p mocks
+//go:generate minimock -i github.com/marinaaaniram/go-auth/internal/repository.UserRepository -o user_repository_minimock.go -n UserRepositoryMock -p mocks
 
 import (
 	"context"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	"sync"
 	mm_atomic "sync/atomic"
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // UserRepositoryMock implements mm_repository.UserRepository
@@ -40,9 +40,9 @@ type UserRepositoryMock struct {
 	beforeGetCounter uint64
 	GetMock          mUserRepositoryMockGet
 
-	funcGetAuthInfo          func(ctx context.Context, auth *model.Auth) (up1 *model.User, err error)
+	funcGetAuthInfo          func(ctx context.Context, auth *model.AuthInput) (up1 *model.User, err error)
 	funcGetAuthInfoOrigin    string
-	inspectFuncGetAuthInfo   func(ctx context.Context, auth *model.Auth)
+	inspectFuncGetAuthInfo   func(ctx context.Context, auth *model.AuthInput)
 	afterGetAuthInfoCounter  uint64
 	beforeGetAuthInfoCounter uint64
 	GetAuthInfoMock          mUserRepositoryMockGetAuthInfo
@@ -1138,13 +1138,13 @@ type UserRepositoryMockGetAuthInfoExpectation struct {
 // UserRepositoryMockGetAuthInfoParams contains parameters of the UserRepository.GetAuthInfo
 type UserRepositoryMockGetAuthInfoParams struct {
 	ctx  context.Context
-	auth *model.Auth
+	auth *model.AuthInput
 }
 
 // UserRepositoryMockGetAuthInfoParamPtrs contains pointers to parameters of the UserRepository.GetAuthInfo
 type UserRepositoryMockGetAuthInfoParamPtrs struct {
 	ctx  *context.Context
-	auth **model.Auth
+	auth **model.AuthInput
 }
 
 // UserRepositoryMockGetAuthInfoResults contains results of the UserRepository.GetAuthInfo
@@ -1171,7 +1171,7 @@ func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Optional() *mUserRepository
 }
 
 // Expect sets up expected params for UserRepository.GetAuthInfo
-func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Expect(ctx context.Context, auth *model.Auth) *mUserRepositoryMockGetAuthInfo {
+func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Expect(ctx context.Context, auth *model.AuthInput) *mUserRepositoryMockGetAuthInfo {
 	if mmGetAuthInfo.mock.funcGetAuthInfo != nil {
 		mmGetAuthInfo.mock.t.Fatalf("UserRepositoryMock.GetAuthInfo mock is already set by Set")
 	}
@@ -1219,7 +1219,7 @@ func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) ExpectCtxParam1(ctx context
 }
 
 // ExpectAuthParam2 sets up expected param auth for UserRepository.GetAuthInfo
-func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) ExpectAuthParam2(auth *model.Auth) *mUserRepositoryMockGetAuthInfo {
+func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) ExpectAuthParam2(auth *model.AuthInput) *mUserRepositoryMockGetAuthInfo {
 	if mmGetAuthInfo.mock.funcGetAuthInfo != nil {
 		mmGetAuthInfo.mock.t.Fatalf("UserRepositoryMock.GetAuthInfo mock is already set by Set")
 	}
@@ -1242,7 +1242,7 @@ func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) ExpectAuthParam2(auth *mode
 }
 
 // Inspect accepts an inspector function that has same arguments as the UserRepository.GetAuthInfo
-func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Inspect(f func(ctx context.Context, auth *model.Auth)) *mUserRepositoryMockGetAuthInfo {
+func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Inspect(f func(ctx context.Context, auth *model.AuthInput)) *mUserRepositoryMockGetAuthInfo {
 	if mmGetAuthInfo.mock.inspectFuncGetAuthInfo != nil {
 		mmGetAuthInfo.mock.t.Fatalf("Inspect function is already set for UserRepositoryMock.GetAuthInfo")
 	}
@@ -1267,7 +1267,7 @@ func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Return(up1 *model.User, err
 }
 
 // Set uses given function f to mock the UserRepository.GetAuthInfo method
-func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Set(f func(ctx context.Context, auth *model.Auth) (up1 *model.User, err error)) *UserRepositoryMock {
+func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Set(f func(ctx context.Context, auth *model.AuthInput) (up1 *model.User, err error)) *UserRepositoryMock {
 	if mmGetAuthInfo.defaultExpectation != nil {
 		mmGetAuthInfo.mock.t.Fatalf("Default expectation is already set for the UserRepository.GetAuthInfo method")
 	}
@@ -1283,7 +1283,7 @@ func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) Set(f func(ctx context.Cont
 
 // When sets expectation for the UserRepository.GetAuthInfo which will trigger the result defined by the following
 // Then helper
-func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) When(ctx context.Context, auth *model.Auth) *UserRepositoryMockGetAuthInfoExpectation {
+func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) When(ctx context.Context, auth *model.AuthInput) *UserRepositoryMockGetAuthInfoExpectation {
 	if mmGetAuthInfo.mock.funcGetAuthInfo != nil {
 		mmGetAuthInfo.mock.t.Fatalf("UserRepositoryMock.GetAuthInfo mock is already set by Set")
 	}
@@ -1325,7 +1325,7 @@ func (mmGetAuthInfo *mUserRepositoryMockGetAuthInfo) invocationsDone() bool {
 }
 
 // GetAuthInfo implements mm_repository.UserRepository
-func (mmGetAuthInfo *UserRepositoryMock) GetAuthInfo(ctx context.Context, auth *model.Auth) (up1 *model.User, err error) {
+func (mmGetAuthInfo *UserRepositoryMock) GetAuthInfo(ctx context.Context, auth *model.AuthInput) (up1 *model.User, err error) {
 	mm_atomic.AddUint64(&mmGetAuthInfo.beforeGetAuthInfoCounter, 1)
 	defer mm_atomic.AddUint64(&mmGetAuthInfo.afterGetAuthInfoCounter, 1)
 

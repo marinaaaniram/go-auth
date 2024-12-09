@@ -2,16 +2,16 @@
 
 package mocks
 
-//go:generate minimock -i go-auth/internal/service.UserCacheService -o user_cache_service_minimock.go -n UserCacheServiceMock -p mocks
+//go:generate minimock -i github.com/marinaaaniram/go-auth/internal/service.UserCacheService -o user_cache_service_minimock.go -n UserCacheServiceMock -p mocks
 
 import (
 	"context"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	"sync"
 	mm_atomic "sync/atomic"
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // UserCacheServiceMock implements mm_service.UserCacheService

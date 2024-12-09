@@ -2,16 +2,16 @@
 
 package mocks
 
-//go:generate minimock -i go-auth/internal/service.UserProducerService -o user_producer_service_minimock.go -n UserProducerServiceMock -p mocks
+//go:generate minimock -i github.com/marinaaaniram/go-auth/internal/service.UserProducerService -o user_producer_service_minimock.go -n UserProducerServiceMock -p mocks
 
 import (
 	"context"
-	"github.com/marinaaaniram/go-auth/internal/model"
 	"sync"
 	mm_atomic "sync/atomic"
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // UserProducerServiceMock implements mm_service.UserProducerService

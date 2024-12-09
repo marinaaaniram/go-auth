@@ -8,7 +8,8 @@ LOCAL_MIGRATION_DSN=$(MIGRATION_DSN)
 init:
 	go clean -modcache
 	make install-deps
-	make get-deps
+	rm -f go.sum 
+	go mod tidy
 	make vendor-proto
 	make generate
 	make generate-mocks
@@ -23,14 +24,7 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.20.0
 	GOBIN=$(LOCAL_BIN) go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.20.0
 	GOBIN=$(LOCAL_BIN) go install github.com/rakyll/statik@v0.1.7
-
-get-deps:
-	go get -u google.golang.org/protobuf/cmd/protoc-gen-go
-	go get -u google.golang.org/grpc/cmd/protoc-gen-go-grpc
-	go get -u google.golang.org/protobuf/types/known/emptypb
-	go get -u github.com/gojuno/minimock/v3
-	go get -u github.com/marinaaaniram/go-common-platform@latest
-	go mod tidy 
+	GOBIN=$(LOCAL_BIN) go install github.com/bojand/ghz/cmd/ghz@latest
 
 generate:
 	mkdir -p pkg/swagger
@@ -115,3 +109,23 @@ vendor-proto:
 			mv vendor.protogen/openapiv2/protoc-gen-openapiv2/options/*.proto vendor.protogen/protoc-gen-openapiv2/options &&\
 			rm -rf vendor.protogen/openapiv2 ;\
 		fi
+
+grpc-load-test:
+	ghz \
+		--proto api/user_v1/user.proto \
+		--call user_v1.UserV1.Get \
+		--data '{"id": 98}' \
+		--rps 100 \
+		--total 3000 \
+		--insecure \
+		localhost:50051
+
+grpc-error-load-test:
+	ghz \
+		--proto api/user_v1/user.proto \
+		--call user_v1.UserV1.Get \
+		--data '{"id": 0}' \
+		--rps 100 \
+		--total 3000 \
+		--insecure \
+		localhost:50051

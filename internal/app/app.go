@@ -2,16 +2,27 @@ package app
 
 import (
 	"context"
+	"flag"
 	"io"
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"sync"
+	"time"
 
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"github.com/marinaaaniram/go-common-platform/pkg/closer"
+	"github.com/natefinch/lumberjack"
+	"github.com/opentracing/opentracing-go"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
+	"github.com/sony/gobreaker"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
@@ -24,13 +35,24 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/config"
 	"github.com/marinaaaniram/go-auth/internal/interceptor"
+	"github.com/marinaaaniram/go-auth/internal/logger"
+	"github.com/marinaaaniram/go-auth/internal/metric"
+	"github.com/marinaaaniram/go-auth/internal/rate_limiter"
+	"github.com/marinaaaniram/go-auth/internal/tracing"
+)
+
+var logLevel = flag.String("l", "info", "log level")
+
+const (
+	serviceName = "github.com/marinaaaniram/go-auth"
 )
 
 type App struct {
-	serviceProvider *serviceProvider
-	grpcServer      *grpc.Server
-	httpServer      *http.Server
-	swaggerServer   *http.Server
+	serviceProvider  *serviceProvider
+	grpcServer       *grpc.Server
+	httpServer       *http.Server
+	swaggerServer    *http.Server
+	prometheusServer *http.Server
 }
 
 // Create app
@@ -85,6 +107,15 @@ func (a *App) Run(ctx context.Context) error {
 	go func() {
 		defer wg.Done()
 
+		err := a.runPrometheusServer()
+		if err != nil {
+			log.Fatalf("Failed to run Swagger server: %v", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+
 		err := a.serviceProvider.GetUserConsumer(ctx).RunConsumer(ctx)
 		if err != nil {
 			log.Printf("Failed to run consumer: %s", err.Error())
@@ -100,11 +131,15 @@ func (a *App) Run(ctx context.Context) error {
 func (a *App) initDeps(ctx context.Context) error {
 	inits := []func(context.Context) error{
 		a.initConfig,
+		a.initMetrics,
 		a.initServiceProvider,
 		a.initGRPCServer,
 		a.initHTTPServer,
 		a.initSwaggerServer,
+		a.initPrometheusServer,
 	}
+	logger.Init(getCore(getAtomicLevel()))
+	tracing.Init(logger.Logger(), serviceName)
 
 	for _, f := range inits {
 		err := f(ctx)
@@ -132,11 +167,47 @@ func (a *App) initServiceProvider(_ context.Context) error {
 	return nil
 }
 
+// Init metrics
+func (a *App) initMetrics(ctx context.Context) error {
+	err := metric.Init(ctx)
+	if err != nil {
+		log.Fatalf("Failed to init metrics: %v", err)
+	}
+
+	return nil
+}
+
 // Init GRPC server
 func (a *App) initGRPCServer(ctx context.Context) error {
+	logger.Init(getCore(getAtomicLevel()))
+
+	rateLimiter := rate_limiter.NewTokenBucketLimiter(ctx, 10, time.Second)
+
+	cb := gobreaker.NewCircuitBreaker(gobreaker.Settings{
+		Name:        "my-service",
+		MaxRequests: 3,
+		Timeout:     5 * time.Second,
+		ReadyToTrip: func(counts gobreaker.Counts) bool {
+			failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+			return failureRatio >= 0.6
+		},
+		OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
+			log.Printf("Circuit Breaker: %s, changed from %v, to %v\n", name, from, to)
+		},
+	})
+
 	a.grpcServer = grpc.NewServer(
 		grpc.Creds(insecure.NewCredentials()),
-		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
+		grpc.UnaryInterceptor(
+			grpcMiddleware.ChainUnaryServer(
+				otgrpc.OpenTracingServerInterceptor(opentracing.GlobalTracer()),
+				interceptor.ErrorCodesInterceptor,
+				interceptor.NewRateLimiterInterceptor(rateLimiter).Unary,
+				interceptor.NewCircuitBreakerInterceptor(cb).Unary,
+				interceptor.MetricsInterceptor,
+				interceptor.LogInterceptor,
+				interceptor.ValidateInterceptor,
+			)),
 	)
 
 	reflection.Register(a.grpcServer)
@@ -195,6 +266,19 @@ func (a *App) initSwaggerServer(_ context.Context) error {
 	return nil
 }
 
+// Init Swagger server
+func (a *App) initPrometheusServer(_ context.Context) error {
+	mux := http.NewServeMux()
+	mux.Handle("/metrics", promhttp.Handler())
+
+	a.prometheusServer = &http.Server{
+		Addr:    "0.0.0.0:2112",
+		Handler: mux,
+	}
+
+	return nil
+}
+
 // Run GRPC server
 func (a *App) runGRPCServer() error {
 	log.Printf("GRPC server is running on %s", a.serviceProvider.GRPCConfig().Address())
@@ -229,6 +313,17 @@ func (a *App) runSwaggerServer() error {
 	log.Printf("Swagger server is running on %s", a.serviceProvider.SwaggerConfig().Address())
 
 	err := a.swaggerServer.ListenAndServe()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *App) runPrometheusServer() error {
+	log.Printf("Prometheus server is running on %s", "0.0.0.0:2112")
+
+	err := a.prometheusServer.ListenAndServe()
 	if err != nil {
 		return err
 	}
@@ -275,4 +370,39 @@ func serveSwaggerFile(path string) http.HandlerFunc {
 
 		log.Printf("Served swagger file: %s", path)
 	}
+}
+
+func getCore(level zap.AtomicLevel) zapcore.Core {
+	stdout := zapcore.AddSync(os.Stdout)
+
+	file := zapcore.AddSync(&lumberjack.Logger{
+		Filename:   "logs/app.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     7, // days
+	})
+
+	productionCfg := zap.NewProductionEncoderConfig()
+	productionCfg.TimeKey = "timestamp"
+	productionCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+
+	developmentCfg := zap.NewDevelopmentEncoderConfig()
+	developmentCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+
+	consoleEncoder := zapcore.NewConsoleEncoder(developmentCfg)
+	fileEncoder := zapcore.NewJSONEncoder(productionCfg)
+
+	return zapcore.NewTee(
+		zapcore.NewCore(consoleEncoder, stdout, level),
+		zapcore.NewCore(fileEncoder, file, level),
+	)
+}
+
+func getAtomicLevel() zap.AtomicLevel {
+	var level zapcore.Level
+	if err := level.Set(*logLevel); err != nil {
+		log.Fatalf("failed to set log level: %v", err)
+	}
+
+	return zap.NewAtomicLevelAt(level)
 }
