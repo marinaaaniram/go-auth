@@ -7,6 +7,7 @@ import (
 
 	"github.com/marinaaaniram/go-auth/internal/converter"
 	"github.com/marinaaaniram/go-auth/internal/errors"
+	"github.com/marinaaaniram/go-auth/internal/model"
 )
 
 // Login Auth in desc layer
@@ -15,12 +16,14 @@ func (i *Implementation) Login(ctx context.Context, req *desc.LoginRequest) (*de
 		return nil, errors.ErrPointerIsNil("req")
 	}
 
-	refreshToken, err := i.authService.Login(ctx, converter.FromDescLoginToAuth(req))
+	var authOutput *model.AuthOutput
+	authOutput, err := i.authService.Login(ctx, converter.FromDescLoginToAuth(req))
 	if err != nil {
 		return nil, err
 	}
 
 	return &desc.LoginResponse{
-		RefreshToken: refreshToken,
+		RefreshToken: authOutput.RefreshToken,
+		AccessToken:  authOutput.AccessToken,
 	}, nil
 }

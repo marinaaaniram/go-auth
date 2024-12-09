@@ -15,7 +15,7 @@ import (
 )
 
 // Login Auth in repository layer
-func (r *repo) GetAuthInfo(ctx context.Context, auth *model.Auth) (*model.User, error) {
+func (r *repo) GetAuthInfo(ctx context.Context, auth *model.AuthInput) (*model.User, error) {
 	if auth == nil {
 		return nil, errors.ErrPointerIsNil("auth")
 	}

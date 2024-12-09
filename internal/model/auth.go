@@ -1,7 +1,13 @@
 package model
 
 // Internal Auth model
-type Auth struct {
+type AuthInput struct {
 	Email    string
 	Password string
+}
+
+// Internal Auth model
+type AuthOutput struct {
+	RefreshToken string
+	AccessToken  string
 }

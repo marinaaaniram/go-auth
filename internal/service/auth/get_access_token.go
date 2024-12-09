@@ -19,7 +19,7 @@ func (s *serv) GetAccessToken(ctx context.Context, refreshToken string) (string,
 	}
 
 	var user *model.User
-	user, err = s.userRepository.GetAuthInfo(ctx, &model.Auth{
+	user, err = s.userRepository.GetAuthInfo(ctx, &model.AuthInput{
 		Email: claims.Email,
 	})
 	if err != nil {

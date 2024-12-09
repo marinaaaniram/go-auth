@@ -24,7 +24,7 @@ type UserRepository interface {
 	Update(ctx context.Context, user *model.User) error
 	Delete(ctx context.Context, id int64) error
 
-	GetAuthInfo(ctx context.Context, auth *model.Auth) (*model.User, error)
+	GetAuthInfo(ctx context.Context, auth *model.AuthInput) (*model.User, error)
 }
 
 // Describe User redis repository interface
